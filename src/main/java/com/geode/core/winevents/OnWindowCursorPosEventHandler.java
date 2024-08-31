@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorPosCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
 
 public class OnWindowCursorPosEventHandler extends WindowCallbacksHandler implements GLFWCursorPosCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowCursorPosEventHandler extends WindowCallbacksHandler implem
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetCursorPosCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWCursorPosCallback callback = GLFW.glfwSetCursorPosCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface CursorXCallback extends WindowCallback {

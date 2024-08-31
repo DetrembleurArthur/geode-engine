@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWMonitorCallback;
 import org.lwjgl.glfw.GLFWMonitorCallbackI;
 
 public class OnWindowMonitorEventHandler extends WindowCallbacksHandler implements GLFWMonitorCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowMonitorEventHandler extends WindowCallbacksHandler implemen
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetMonitorCallback(null);
+        GLFWMonitorCallback callback = GLFW.glfwSetMonitorCallback(null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface MonitorConnected extends WindowCallback {

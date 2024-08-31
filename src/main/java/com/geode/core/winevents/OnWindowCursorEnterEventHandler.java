@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.glfw.GLFWCursorEnterCallbackI;
 
 public class OnWindowCursorEnterEventHandler extends WindowCallbacksHandler implements GLFWCursorEnterCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowCursorEnterEventHandler extends WindowCallbacksHandler impl
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetCursorEnterCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWCursorEnterCallback callback = GLFW.glfwSetCursorEnterCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface CursorEnteredCallback extends WindowCallback {

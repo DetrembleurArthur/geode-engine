@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
 import org.lwjgl.glfw.GLFWWindowMaximizeCallbackI;
 
@@ -18,7 +19,9 @@ public class OnWindowFocusedEventHandler extends WindowCallbacksHandler implemen
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowFocusCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowFocusCallback callback = GLFW.glfwSetWindowFocusCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface FocusedCallback extends WindowCallback {

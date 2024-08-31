@@ -1,6 +1,6 @@
 package com.geode.core;
 
-public abstract class Scene implements AutoCloseable {
+public abstract class Scene implements Initializable, Closeable {
 
     // appelée à l'instanciation
     public abstract void init();

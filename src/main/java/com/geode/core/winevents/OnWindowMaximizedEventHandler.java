@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowIconifyCallbackI;
+import org.lwjgl.glfw.GLFWWindowMaximizeCallback;
 import org.lwjgl.glfw.GLFWWindowMaximizeCallbackI;
 
 public class OnWindowMaximizedEventHandler extends WindowCallbacksHandler implements GLFWWindowMaximizeCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowMaximizedEventHandler extends WindowCallbacksHandler implem
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowMaximizeCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowMaximizeCallback callback = GLFW.glfwSetWindowMaximizeCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface MaximizedCallback extends WindowCallback {

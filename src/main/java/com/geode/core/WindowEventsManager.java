@@ -1,9 +1,11 @@
 package com.geode.core;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.geode.core.winevents.*;
 import com.geode.exceptions.GeodeException;
 
-public class WindowEventsManager implements Initializable, AutoCloseable {
+public class WindowEventsManager implements Initializable, Closeable {
 
     private final Window window;
     private final OnWindowSizeEventHandler windowSizeEventHandler;
@@ -90,6 +92,7 @@ public class WindowEventsManager implements Initializable, AutoCloseable {
         windowMonitorEventHandler.close();
         windowMouseEventHandler.close();
         windowJoystickEventHandler.close();
+
     }
 
     public WindowEventsManager onWidth(OnWindowSizeEventHandler.WidthCallback callback) {

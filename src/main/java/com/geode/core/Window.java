@@ -6,12 +6,15 @@ import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
+
+import static org.lwjgl.system.MemoryUtil.NULL;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
-public class Window implements AutoCloseable {
+public class Window implements Closeable {
 
     private static final Logger logger = LogManager.getLogger(Window.class);
 
@@ -32,6 +35,7 @@ public class Window implements AutoCloseable {
 
     @Override
     public void close() {
+        GLFW.glfwMakeContextCurrent(NULL);
         if(reference != 0) {
             GLFW.glfwDestroyWindow(reference);
             logger.info("Window closed");

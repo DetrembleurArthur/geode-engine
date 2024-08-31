@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallbackI;
 
 public class OnWindowFramebufferSizeEventHandler extends WindowCallbacksHandler implements GLFWFramebufferSizeCallbackI {
@@ -19,7 +20,9 @@ public class OnWindowFramebufferSizeEventHandler extends WindowCallbacksHandler 
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetFramebufferSizeCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWFramebufferSizeCallback callback = GLFW.glfwSetFramebufferSizeCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface FbWidthCallback extends WindowCallback {

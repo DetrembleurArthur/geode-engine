@@ -10,7 +10,8 @@
 
     <properties>
         <lwjgl.version>3.3.4</lwjgl.version>
-        <lwjgl.natives>natives-windows</lwjgl.natives>
+        <!--lwjgl.natives>natives-windows</lwjgl.natives-->
+        <lwjgl.natives>natives-linux</lwjgl.natives>
         <joml.version>1.10.7</joml.version>
     </properties>
 

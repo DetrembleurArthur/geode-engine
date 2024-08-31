@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowIconifyCallback;
 import org.lwjgl.glfw.GLFWWindowIconifyCallbackI;
 
 public class OnWindowIconifyEventHandler extends WindowCallbacksHandler implements GLFWWindowIconifyCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowIconifyEventHandler extends WindowCallbacksHandler implemen
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowIconifyCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowIconifyCallback callback = GLFW.glfwSetWindowIconifyCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface IconifyCallback extends WindowCallback {

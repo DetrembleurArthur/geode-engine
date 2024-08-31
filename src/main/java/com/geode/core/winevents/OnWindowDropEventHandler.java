@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWDropCallbackI;
 import org.lwjgl.system.Pointer;
 
@@ -21,7 +22,9 @@ public class OnWindowDropEventHandler extends WindowCallbacksHandler implements 
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetDropCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWDropCallback callback = GLFW.glfwSetDropCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface DropCallback extends WindowCallback {

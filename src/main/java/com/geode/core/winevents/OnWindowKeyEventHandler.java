@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.core.winevents.key.KeyInput;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 
 public class OnWindowKeyEventHandler extends WindowCallbacksHandler implements GLFWKeyCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowKeyEventHandler extends WindowCallbacksHandler implements G
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetKeyCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWKeyCallback callback = GLFW.glfwSetKeyCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface KeyCallback extends WindowCallback {

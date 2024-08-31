@@ -5,6 +5,7 @@ import com.geode.exceptions.GeodeException;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowPosCallback;
 import org.lwjgl.glfw.GLFWWindowPosCallbackI;
 
 public class OnWindowPosEventHandler extends WindowCallbacksHandler implements GLFWWindowPosCallbackI {
@@ -19,7 +20,9 @@ public class OnWindowPosEventHandler extends WindowCallbacksHandler implements G
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowPosCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowPosCallback callback = GLFW.glfwSetWindowPosCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface XCallback extends WindowCallback {

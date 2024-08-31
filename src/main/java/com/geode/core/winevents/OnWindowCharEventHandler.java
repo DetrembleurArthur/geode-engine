@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCharCallbackI;
 
 public class OnWindowCharEventHandler extends WindowCallbacksHandler implements GLFWCharCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowCharEventHandler extends WindowCallbacksHandler implements 
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetCharCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWCharCallback callback = GLFW.glfwSetCharCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface CharCallback extends WindowCallback {

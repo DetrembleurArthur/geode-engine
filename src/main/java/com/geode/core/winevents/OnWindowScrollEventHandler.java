@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
 
 public class OnWindowScrollEventHandler extends WindowCallbacksHandler implements GLFWScrollCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowScrollEventHandler extends WindowCallbacksHandler implement
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetScrollCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWScrollCallback callback = GLFW.glfwSetScrollCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface ScrollXCallback extends WindowCallback {

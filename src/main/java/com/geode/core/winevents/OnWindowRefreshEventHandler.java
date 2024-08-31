@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowRefreshCallback;
 import org.lwjgl.glfw.GLFWWindowRefreshCallbackI;
 
 public class OnWindowRefreshEventHandler extends WindowCallbacksHandler implements GLFWWindowRefreshCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowRefreshEventHandler extends WindowCallbacksHandler implemen
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowRefreshCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowRefreshCallback callback = GLFW.glfwSetWindowRefreshCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface RefreshCallback extends WindowCallback {

@@ -4,6 +4,8 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowCloseCallback;
+import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 
 public class OnWindowSizeEventHandler extends WindowCallbacksHandler implements GLFWWindowSizeCallbackI {
@@ -19,7 +21,9 @@ public class OnWindowSizeEventHandler extends WindowCallbacksHandler implements 
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowSizeCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowSizeCallback callback = GLFW.glfwSetWindowSizeCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface WidthCallback extends WindowCallback {

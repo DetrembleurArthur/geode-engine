@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.core.winevents.mouse.MouseInput;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 
 public class OnWindowMouseEventHandler extends WindowCallbacksHandler implements GLFWMouseButtonCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowMouseEventHandler extends WindowCallbacksHandler implements
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetMouseButtonCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWMouseButtonCallback callback = GLFW.glfwSetMouseButtonCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface MouseCallback extends WindowCallback {

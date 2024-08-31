@@ -1,5 +1,6 @@
 package com.geode.core.winevents;
 
+import com.geode.core.Closeable;
 import com.geode.core.Initializable;
 import com.geode.core.WindowEventsManager;
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class WindowCallbacksHandler implements Initializable, AutoCloseable {
+public abstract class WindowCallbacksHandler implements Initializable, Closeable {
 
     private static final Logger logger = LogManager.getLogger(WindowCallbacksHandler.class);
 

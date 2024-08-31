@@ -4,6 +4,7 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowContentScaleCallback;
 import org.lwjgl.glfw.GLFWWindowContentScaleCallbackI;
 
 public class OnWindowContentScaleEventHandler extends WindowCallbacksHandler implements GLFWWindowContentScaleCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowContentScaleEventHandler extends WindowCallbacksHandler imp
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetWindowContentScaleCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowContentScaleCallback callback = GLFW.glfwSetWindowContentScaleCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface ScaleXCallback extends WindowCallback {

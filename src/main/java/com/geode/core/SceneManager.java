@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-public class SceneManager implements Initializable, AutoCloseable {
+public class SceneManager implements Initializable, Closeable {
 
     private static final Logger logger = LogManager.getLogger(SceneManager.class);
     private final HashMap<String, Scene> scenes = new HashMap<>();

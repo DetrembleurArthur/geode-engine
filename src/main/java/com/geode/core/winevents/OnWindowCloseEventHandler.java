@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWWindowCloseCallback;
 import org.lwjgl.glfw.GLFWWindowCloseCallbackI;
 
 public class OnWindowCloseEventHandler extends WindowCallbacksHandler implements GLFWWindowCloseCallbackI {
@@ -18,7 +19,9 @@ public class OnWindowCloseEventHandler extends WindowCallbacksHandler implements
 
     @Override
     public void close() {
-        GLFW.glfwSetWindowCloseCallback(windowEventManager.getWindow().getPointer(), null);
+        GLFWWindowCloseCallback callback = GLFW.glfwSetWindowCloseCallback(windowEventManager.getWindow().getPointer(), null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface CloseCallback extends WindowCallback {

@@ -13,7 +13,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
-public class WindowManager implements Initializable, AutoCloseable {
+public class WindowManager implements Initializable, Closeable {
 
     private static final Logger logger = LogManager.getLogger(WindowManager.class);
 
@@ -48,7 +48,8 @@ public class WindowManager implements Initializable, AutoCloseable {
                 windowEventsManager = new WindowEventsManager(window);
                 windowEventsManager.init();
                 viewport = new Vector4f(0, 0, window.getSize().x, window.getSize().y);
-                GL.createCapabilities();
+                if(GL.createCapabilities() == null)
+                    throw new GeodeException("Failed to create OpenGL capabilities");
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_MULTISAMPLE);
@@ -67,6 +68,7 @@ public class WindowManager implements Initializable, AutoCloseable {
     @Override
     public void close() throws Exception {
         logger.info("closing...");
+        windowEventsManager.close();
         window.close();
         glfwTerminate();
         logger.info("closed !");

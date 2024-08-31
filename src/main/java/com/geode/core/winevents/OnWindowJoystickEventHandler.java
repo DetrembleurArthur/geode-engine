@@ -3,6 +3,7 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFWJoystickCallback;
 import org.lwjgl.glfw.GLFWJoystickCallbackI;
 
 public class OnWindowJoystickEventHandler extends WindowCallbacksHandler implements GLFWJoystickCallbackI {
@@ -17,7 +18,9 @@ public class OnWindowJoystickEventHandler extends WindowCallbacksHandler impleme
 
     @Override
     public void close() throws Exception {
-        GLFW.glfwSetJoystickCallback(null);
+        GLFWJoystickCallback callback = GLFW.glfwSetJoystickCallback(null);
+        if(callback != null)
+            callback.free();
     }
 
     public interface JoystickConnectedCallback extends WindowCallback {

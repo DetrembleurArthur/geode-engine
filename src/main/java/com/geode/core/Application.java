@@ -5,6 +5,7 @@ import com.geode.core.reflections.SceneEntry;
 import com.geode.exceptions.GeodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFW;
 
 public class Application implements Initializable, Runnable, AutoCloseable {
 
@@ -45,7 +46,9 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     @Override
     public void close() throws Exception {
         logger.info("closing...");
+        sceneManager.close();
         windowManager.close();
+        GLFW.glfwSetErrorCallback(null).free();
         logger.info("closed !");
     }
 
