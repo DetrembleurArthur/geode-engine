@@ -23,20 +23,12 @@ public class OnWindowIconifyEventHandler extends WindowCallbacksHandler implemen
             callback.free();
     }
 
-    public interface IconifyCallback extends WindowCallback {
-        void trigger();
-    }
-
-    public interface RestoreCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window, boolean iconify) {
         if(iconify) {
-            trigger(IconifyCallback.class);
+            trigger(WinEvents.IconifyCallback.class);
         } else {
-            trigger(RestoreCallback.class);
+            trigger(WinEvents.RestoreCallback.class);
         }
     }
 }

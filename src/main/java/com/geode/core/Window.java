@@ -2,6 +2,7 @@ package com.geode.core;
 
 
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Image;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.joml.Vector4f;
@@ -11,7 +12,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 public class Window implements Closeable {
@@ -239,14 +242,16 @@ public class Window implements Closeable {
     }
 
     public void setIcon(String iconPath) throws Exception {
-        /*if (iconPath.isEmpty()) {
-            GLFW.glfwSetWindowIcon(reference, 0, null);
-        } else {
+        if (!iconPath.isEmpty()) {
             Image image = new Image(iconPath);
-            image.load();
-            GLFW.glfwSetWindowIcon(reference, image.getImageBuffer());
-        }*/
-        throw new Exception();
+            image.init();
+            try(MemoryStack stack = MemoryStack.stackPush()) {
+                GLFWImage.Buffer iconBuffer = GLFWImage.malloc(1, stack);
+                iconBuffer.put(0, image.getGlfwImage());
+                GLFW.glfwSetWindowIcon(reference, iconBuffer);
+            }
+            image.close();
+        }
     }
 
     public void setClearColor(Vector4f color) {

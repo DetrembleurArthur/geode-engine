@@ -24,12 +24,10 @@ public class OnWindowCloseEventHandler extends WindowCallbacksHandler implements
             callback.free();
     }
 
-    public interface CloseCallback extends WindowCallback {
-        void trigger();
-    }
+
 
     @Override
     public void invoke(long window) {
-        trigger(CloseCallback.class);
+        trigger(WinEvents.CloseCallback.class);
     }
 }

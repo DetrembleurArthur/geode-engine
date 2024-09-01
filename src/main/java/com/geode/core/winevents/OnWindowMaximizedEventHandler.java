@@ -24,20 +24,12 @@ public class OnWindowMaximizedEventHandler extends WindowCallbacksHandler implem
             callback.free();
     }
 
-    public interface MaximizedCallback extends WindowCallback {
-        void trigger();
-    }
-
-    public interface MinimizedCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window, boolean maximized) {
         if(maximized) {
-            trigger(MaximizedCallback.class);
+            trigger(WinEvents.MaximizedCallback.class);
         } else {
-            trigger(MinimizedCallback.class);
+            trigger(WinEvents.MinimizedCallback.class);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.geode.core;
 
+import com.geode.core.reflections.Singleton;
 import com.geode.exceptions.GeodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,16 +14,30 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
+@Singleton
 public class WindowManager implements Initializable, Closeable {
 
     private static final Logger logger = LogManager.getLogger(WindowManager.class);
-
+    private static WindowManager instance;
     private Window window;
     private WindowEventsManager windowEventsManager;
+    private MouseManager mouseManager;
+    private KeyManager keyManager;
     private boolean glfwInitialized = false;
     private Vector4f viewport = new Vector4f();
     private Runnable eventPolicyRunner;
     private Runnable hintCallback;
+
+    public static WindowManager getInstance() {
+        return instance;
+    }
+
+    WindowManager() throws GeodeException {
+        if(instance == null)
+            instance = this;
+        else
+            throw new GeodeException("WindowManager is a singleton");
+    }
 
     @Override
     public void init() throws GeodeException {
@@ -46,10 +61,13 @@ public class WindowManager implements Initializable, Closeable {
                 logger.info("Window created !");
                 window.makeCurrent();
                 windowEventsManager = new WindowEventsManager(window);
+                mouseManager = new MouseManager(window);
+                keyManager = new KeyManager(window);
                 windowEventsManager.init();
+                mouseManager.init();
+                keyManager.init();
                 viewport = new Vector4f(0, 0, window.getSize().x, window.getSize().y);
-                if(GL.createCapabilities() == null)
-                    throw new GeodeException("Failed to create OpenGL capabilities");
+                GL.createCapabilities();
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_MULTISAMPLE);
@@ -68,6 +86,8 @@ public class WindowManager implements Initializable, Closeable {
     @Override
     public void close() throws Exception {
         logger.info("closing...");
+        mouseManager.close();
+        keyManager.close();
         windowEventsManager.close();
         window.close();
         glfwTerminate();
@@ -152,5 +172,9 @@ public class WindowManager implements Initializable, Closeable {
 
     public WindowEventsManager getWindowEventsManager() {
         return windowEventsManager;
+    }
+
+    public MouseManager getMouseManager() {
+        return mouseManager;
     }
 }

@@ -1,7 +1,7 @@
 package com.geode.core.winevents;
 
 import com.geode.core.WindowEventsManager;
-import com.geode.core.winevents.mouse.MouseInput;
+import com.geode.core.mouse.MouseInput;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
@@ -24,13 +24,9 @@ public class OnWindowMouseEventHandler extends WindowCallbacksHandler implements
             callback.free();
     }
 
-    public interface MouseCallback extends WindowCallback {
-        void trigger(MouseInput mouseInput);
-    }
-
     @Override
     public void invoke(long window, int button, int action, int mods) {
         MouseInput mouseInput = new MouseInput(button, action, mods);
-        trigger(MouseCallback.class, mouseInput);
+        trigger(WinEvents.MouseCallback.class, mouseInput);
     }
 }

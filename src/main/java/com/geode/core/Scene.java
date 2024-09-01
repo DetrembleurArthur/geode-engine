@@ -1,12 +1,9 @@
 package com.geode.core;
 
-public abstract class Scene implements Initializable, Closeable {
+public abstract class Scene implements Initializable, Closeable, Taggable {
 
     // appelée à l'instanciation
     public abstract void init();
-
-    // appelée à la première utilisation
-    public abstract void initResources();
 
     // appelée lors d'une dé-pause
     public void resume() {
@@ -30,4 +27,9 @@ public abstract class Scene implements Initializable, Closeable {
 
     public abstract void update(double dt);
     public abstract void draw(double dt);
+
+    @Override
+    public Object tag() {
+        return this;
+    }
 }

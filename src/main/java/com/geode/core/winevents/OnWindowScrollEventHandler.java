@@ -24,30 +24,18 @@ public class OnWindowScrollEventHandler extends WindowCallbacksHandler implement
             callback.free();
     }
 
-    public interface ScrollXCallback extends WindowCallback {
-        void trigger(Double x);
-    }
-
-    public interface ScrollYCallback extends WindowCallback {
-        void trigger(Double y);
-    }
-
-    public interface ScrollCallback extends WindowCallback {
-        void trigger(Vector2f scroll);
-    }
-
     private Vector2f scroll = new Vector2f();
 
     @Override
     public void invoke(long window, double scrollx, double scrolly) {
         if(scroll.x != scrollx) {
-            trigger(ScrollXCallback.class, scrollx);
+            trigger(WinEvents.ScrollXCallback.class, scrollx);
         }
         if(scroll.y != scrolly) {
-            trigger(ScrollYCallback.class, scrolly);
+            trigger(WinEvents.ScrollYCallback.class, scrolly);
         }
         if(scroll.x != scrollx || scroll.y != scrolly) {
-            trigger(ScrollCallback.class, new Vector2f((float) scrollx, (float) scrolly));
+            trigger(WinEvents.ScrollCallback.class, new Vector2f((float) scrollx, (float) scrolly));
         }
         scroll = new Vector2f((float) scrollx, (float) scrolly);
     }

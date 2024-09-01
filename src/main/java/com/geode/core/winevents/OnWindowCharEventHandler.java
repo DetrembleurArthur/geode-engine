@@ -23,12 +23,8 @@ public class OnWindowCharEventHandler extends WindowCallbacksHandler implements 
             callback.free();
     }
 
-    public interface CharCallback extends WindowCallback {
-        void trigger(Character character);
-    }
-
     @Override
     public void invoke(long window, int character) {
-        trigger(CharCallback.class, (char) character);
+        trigger(WinEvents.CharCallback.class, (char) character);
     }
 }

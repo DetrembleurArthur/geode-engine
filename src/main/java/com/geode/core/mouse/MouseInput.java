@@ -1,4 +1,4 @@
-package com.geode.core.winevents.mouse;
+package com.geode.core.mouse;
 
 public class MouseInput {
 

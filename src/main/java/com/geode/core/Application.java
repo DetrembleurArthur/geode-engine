@@ -1,11 +1,15 @@
 package com.geode.core;
 
+import com.geode.core.reflections.Extensions;
 import com.geode.core.reflections.PackageClassLoaderManager;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Shader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
+
+import java.util.Objects;
 
 public class Application implements Initializable, Runnable, AutoCloseable {
 
@@ -13,12 +17,16 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     private static Application instance = null;
 
     private final WindowManager windowManager;
+    private final ResourcesManager resourcesManager;
+    private final ResourceLocator resourceLocator;
     private final String applicationPackage;
     private final PackageClassLoaderManager packageClassLoaderManager;
     private final SceneManager sceneManager;
 
     private Application(String applicationPackage) throws GeodeException {
         this.applicationPackage = applicationPackage;
+        resourceLocator = new ResourceLocator();
+        resourcesManager = new ResourcesManager();
         windowManager = new WindowManager();
         packageClassLoaderManager = new PackageClassLoaderManager();
         packageClassLoaderManager.register(PackageClassLoaderManager.Defaults.SCENES, applicationPackage,
@@ -29,7 +37,12 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     @Override
     public void init() throws GeodeException {
         logger.info("initializing...");
+        resourceLocator.setResourceFolder("./src/main/resources/");
+        resourceLocator.setLocation(Shader.class, "shaders");
         windowManager.init();
+        resourcesManager.init();
+        resourcesManager.register(Shader.class, new ShaderManager());
+        resourcesManager.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);
         sceneManager.init();
         logger.info("initialized !");
     }
@@ -47,8 +60,9 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     public void close() throws Exception {
         logger.info("closing...");
         sceneManager.close();
+        resourcesManager.close();
         windowManager.close();
-        GLFW.glfwSetErrorCallback(null).free();
+        Objects.requireNonNull(GLFW.glfwSetErrorCallback(null)).free();
         logger.info("closed !");
     }
 

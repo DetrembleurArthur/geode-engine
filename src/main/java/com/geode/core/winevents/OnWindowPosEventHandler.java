@@ -25,30 +25,18 @@ public class OnWindowPosEventHandler extends WindowCallbacksHandler implements G
             callback.free();
     }
 
-    public interface XCallback extends WindowCallback {
-        void trigger(Integer x);
-    }
-
-    public interface YCallback extends WindowCallback {
-        void trigger(Integer y);
-    }
-
-    public interface PositionCallback extends WindowCallback {
-        void trigger(Vector2i position);
-    }
-
     private Vector2i position = new Vector2i();
 
     @Override
     public void invoke(long window, int x, int y) {
         if(position.x != x) {
-            trigger(XCallback.class, x);
+            trigger(WinEvents.XCallback.class, x);
         }
         if(position.y != y) {
-            trigger(YCallback.class, y);
+            trigger(WinEvents.YCallback.class, y);
         }
         if(position.x != x || position.y != y) {
-            trigger(PositionCallback.class, new Vector2f(x, y));
+            trigger(WinEvents.PositionCallback.class, new Vector2f(x, y));
         }
         position = new Vector2i(x, y);
     }

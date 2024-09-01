@@ -1,4 +1,4 @@
-package com.geode.core.winevents.key;
+package com.geode.core.key;
 
 public class KeyInput {
     private int key;

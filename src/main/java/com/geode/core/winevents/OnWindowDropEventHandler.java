@@ -27,10 +27,6 @@ public class OnWindowDropEventHandler extends WindowCallbacksHandler implements 
             callback.free();
     }
 
-    public interface DropCallback extends WindowCallback {
-        void trigger(String[] items);
-    }
-
     @Override
     public void invoke(long window, int count, long paths) {
         String[] items = new String[count];
@@ -38,6 +34,6 @@ public class OnWindowDropEventHandler extends WindowCallbacksHandler implements 
         {
             items[i] = memUTF8(memGetAddress(paths + (long) Pointer.POINTER_SIZE * i));
         }
-        trigger(DropCallback.class, (Object) items);
+        trigger(WinEvents.DropCallback.class, (Object) items);
     }
 }

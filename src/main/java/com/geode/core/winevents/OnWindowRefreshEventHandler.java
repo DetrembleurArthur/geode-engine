@@ -23,12 +23,8 @@ public class OnWindowRefreshEventHandler extends WindowCallbacksHandler implemen
             callback.free();
     }
 
-    public interface RefreshCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window) {
-        trigger(RefreshCallback.class);
+        trigger(WinEvents.RefreshCallback.class);
     }
 }

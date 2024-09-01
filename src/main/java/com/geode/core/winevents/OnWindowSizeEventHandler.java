@@ -26,30 +26,18 @@ public class OnWindowSizeEventHandler extends WindowCallbacksHandler implements 
             callback.free();
     }
 
-    public interface WidthCallback extends WindowCallback {
-        void trigger(Integer width);
-    }
-
-    public interface HeightCallback extends WindowCallback {
-        void trigger(Integer width);
-    }
-
-    public interface SizeCallback extends WindowCallback {
-        void trigger(Vector2i size);
-    }
-
     private Vector2i previousSize = new Vector2i();
 
     @Override
     public void invoke(long window, int width, int height) {
         if(width != previousSize.x) {
-            trigger(WidthCallback.class, width);
+            trigger(WinEvents.WidthCallback.class, width);
         }
         if(height != previousSize.y) {
-            trigger(HeightCallback.class, height);
+            trigger(WinEvents.HeightCallback.class, height);
         }
         if(width != previousSize.x || height != previousSize.y) {
-            trigger(SizeCallback.class, new Vector2i(width, height));
+            trigger(WinEvents.SizeCallback.class, new Vector2i(width, height));
         }
         previousSize = new Vector2i(width, height);
     }

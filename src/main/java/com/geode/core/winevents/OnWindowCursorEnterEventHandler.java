@@ -23,20 +23,12 @@ public class OnWindowCursorEnterEventHandler extends WindowCallbacksHandler impl
             callback.free();
     }
 
-    public interface CursorEnteredCallback extends WindowCallback {
-        void trigger();
-    }
-
-    public interface CursorExitedCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window, boolean entered) {
         if(entered) {
-            trigger(CursorEnteredCallback.class);
+            trigger(WinEvents.CursorEnteredCallback.class);
         } else {
-            trigger(CursorExitedCallback.class);
+            trigger(WinEvents.CursorExitedCallback.class);
         }
     }
 }

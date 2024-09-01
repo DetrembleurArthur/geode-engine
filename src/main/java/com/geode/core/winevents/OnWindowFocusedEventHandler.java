@@ -24,20 +24,12 @@ public class OnWindowFocusedEventHandler extends WindowCallbacksHandler implemen
             callback.free();
     }
 
-    public interface FocusedCallback extends WindowCallback {
-        void trigger();
-    }
-
-    public interface UnfocusedCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window, boolean focused) {
         if(focused) {
-            trigger(FocusedCallback.class);
+            trigger(WinEvents.FocusedCallback.class);
         } else {
-            trigger(UnfocusedCallback.class);
+            trigger(WinEvents.UnfocusedCallback.class);
         }
     }
 }

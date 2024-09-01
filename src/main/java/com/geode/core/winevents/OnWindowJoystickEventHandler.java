@@ -23,20 +23,12 @@ public class OnWindowJoystickEventHandler extends WindowCallbacksHandler impleme
             callback.free();
     }
 
-    public interface JoystickConnectedCallback extends WindowCallback {
-        void trigger();
-    }
-
-    public interface JoystickDisconnectedCallback extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(int window, int event) {
         if(event == GLFW.GLFW_CONNECTED) {
-            trigger(JoystickConnectedCallback.class);
+            trigger(WinEvents.JoystickConnectedCallback.class);
         } else if(event == GLFW.GLFW_DISCONNECTED) {
-            trigger(JoystickDisconnectedCallback.class);
+            trigger(WinEvents.JoystickDisconnectedCallback.class);
         }
     }
 }

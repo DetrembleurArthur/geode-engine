@@ -24,30 +24,20 @@ public class OnWindowContentScaleEventHandler extends WindowCallbacksHandler imp
             callback.free();
     }
 
-    public interface ScaleXCallback extends WindowCallback {
-        void trigger(Float x);
-    }
 
-    public interface ScaleYCallback extends WindowCallback {
-        void trigger(Float y);
-    }
-
-    public interface ScaleCallback extends WindowCallback {
-        void trigger(Vector2f scale);
-    }
 
     private Vector2f scale = new Vector2f();
 
     @Override
     public void invoke(long window, float scalex, float scaley) {
         if(scale.x != scalex) {
-            trigger(ScaleXCallback.class, scalex);
+            trigger(WinEvents.ScaleXCallback.class, scalex);
         }
         if(scale.y != scaley) {
-            trigger(ScaleYCallback.class, scaley);
+            trigger(WinEvents.ScaleYCallback.class, scaley);
         }
         if(scale.x != scalex || scale.y != scaley) {
-            trigger(ScaleCallback.class, new Vector2f(scalex, scaley));
+            trigger(WinEvents.ScaleCallback.class, new Vector2f(scalex, scaley));
         }
         scale = new Vector2f(scalex, scaley);
     }

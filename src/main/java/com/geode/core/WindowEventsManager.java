@@ -1,12 +1,19 @@
 package com.geode.core;
 
+import com.geode.core.key.MandatoryKeyCallback;
+import com.geode.core.reflections.Singleton;
 import org.lwjgl.glfw.GLFW;
 
 import com.geode.core.winevents.*;
 import com.geode.exceptions.GeodeException;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Singleton
 public class WindowEventsManager implements Initializable, Closeable {
 
+    private static WindowEventsManager instance;
     private final Window window;
     private final OnWindowSizeEventHandler windowSizeEventHandler;
     private final OnWindowCloseEventHandler windowCloseEventHandler;
@@ -26,8 +33,13 @@ public class WindowEventsManager implements Initializable, Closeable {
     private final OnWindowMonitorEventHandler windowMonitorEventHandler;
     private final OnWindowMouseEventHandler windowMouseEventHandler;
     private final OnWindowJoystickEventHandler windowJoystickEventHandler;
+    private final List<WindowCallbacksHandler> handlers = new ArrayList<>();
 
-    public WindowEventsManager(Window window) {
+    public WindowEventsManager(Window window) throws GeodeException {
+        if(instance == null)
+            instance = this;
+        else
+            throw new GeodeException("WindowEventsManager is a singleton");
         this.window = window;
         windowSizeEventHandler = new OnWindowSizeEventHandler(this);
         windowCloseEventHandler = new OnWindowCloseEventHandler(this);
@@ -47,230 +59,232 @@ public class WindowEventsManager implements Initializable, Closeable {
         windowMonitorEventHandler = new OnWindowMonitorEventHandler(this);
         windowMouseEventHandler = new OnWindowMouseEventHandler(this);
         windowJoystickEventHandler = new OnWindowJoystickEventHandler(this);
+        handlers.add(windowSizeEventHandler);
+        handlers.add(windowCloseEventHandler);
+        handlers.add(windowFramebufferSizeEventHandler);
+        handlers.add(windowContentScaleEventHandler);
+        handlers.add(windowPosEventHandler);
+        handlers.add(windowIconifyEventHandler);
+        handlers.add(windowMaximizedEventHandler);
+        handlers.add(windowFocusedEventHandler);
+        handlers.add(windowRefreshEventHandler);
+        handlers.add(windowDropEventHandler);
+        handlers.add(windowCursorEnterEventHandler);
+        handlers.add(windowCursorPosEventHandler);
+        handlers.add(windowScrollEventHandler);
+        handlers.add(windowCharEventHandler);
+        handlers.add(windowKeyEventHandler);
+        handlers.add(windowMonitorEventHandler);
+        handlers.add(windowMouseEventHandler);
+        handlers.add(windowJoystickEventHandler);
+    }
+
+    public static WindowEventsManager getInstance() {
+        return instance;
+    }
+
+    private void initMandatoryEvents() {
+        onKey(new MandatoryKeyCallback());
     }
 
 
     @Override
     public void init() throws GeodeException {
-        windowSizeEventHandler.init();
-        windowCloseEventHandler.init();
-        windowFramebufferSizeEventHandler.init();
-        windowContentScaleEventHandler.init();
-        windowPosEventHandler.init();
-        windowIconifyEventHandler.init();
-        windowMaximizedEventHandler.init();
-        windowFocusedEventHandler.init();
-        windowRefreshEventHandler.init();
-        windowDropEventHandler.init();
-        windowCursorEnterEventHandler.init();
-        windowCursorPosEventHandler.init();
-        windowScrollEventHandler.init();
-        windowCharEventHandler.init();
-        windowKeyEventHandler.init();
-        windowMonitorEventHandler.init();
-        windowMouseEventHandler.init();
-        windowJoystickEventHandler.init();
+        for(WindowCallbacksHandler handler : handlers)
+            handler.init();
+        initMandatoryEvents();
     }
 
     @Override
     public void close() throws Exception {
-        windowSizeEventHandler.close();
-        windowCloseEventHandler.close();
-        windowFramebufferSizeEventHandler.close();
-        windowContentScaleEventHandler.close();
-        windowPosEventHandler.close();
-        windowIconifyEventHandler.close();
-        windowMaximizedEventHandler.close();
-        windowFocusedEventHandler.close();
-        windowRefreshEventHandler.close();
-        windowDropEventHandler.close();
-        windowCursorEnterEventHandler.close();
-        windowCursorPosEventHandler.close();
-        windowScrollEventHandler.close();
-        windowCharEventHandler.close();
-        windowKeyEventHandler.close();
-        windowMonitorEventHandler.close();
-        windowMouseEventHandler.close();
-        windowJoystickEventHandler.close();
-
+        for(WindowCallbacksHandler handler : handlers)
+            handler.close();
+        handlers.clear();
     }
 
-    public WindowEventsManager onWidth(OnWindowSizeEventHandler.WidthCallback callback) {
+    public WindowEventsManager removeByTag(Object tag) {
+        for(WindowCallbacksHandler handler : handlers) {
+            handler.removeByTag(tag);
+        }
+        return this;
+    }
+
+    public WindowEventsManager onWidth(WinEvents.WidthCallback callback) {
         windowSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onHeight(OnWindowSizeEventHandler.HeightCallback callback) {
+    public WindowEventsManager onHeight(WinEvents.HeightCallback callback) {
         windowSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onSize(OnWindowSizeEventHandler.SizeCallback callback) {
+    public WindowEventsManager onSize(WinEvents.SizeCallback callback) {
         windowSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onClosed(OnWindowCloseEventHandler.CloseCallback callback) {
+    public WindowEventsManager onClosed(WinEvents.CloseCallback callback) {
         windowCloseEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onFbWidth(OnWindowFramebufferSizeEventHandler.FbWidthCallback callback) {
+    public WindowEventsManager onFbWidth(WinEvents.FbWidthCallback callback) {
         windowFramebufferSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onFbHeight(OnWindowFramebufferSizeEventHandler.FbHeightCallback callback) {
+    public WindowEventsManager onFbHeight(WinEvents.FbHeightCallback callback) {
         windowFramebufferSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onFbSize(OnWindowFramebufferSizeEventHandler.FbSizeCallback callback) {
+    public WindowEventsManager onFbSize(WinEvents.FbSizeCallback callback) {
         windowFramebufferSizeEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScaleX(OnWindowContentScaleEventHandler.ScaleXCallback callback) {
+    public WindowEventsManager onScaleX(WinEvents.ScaleXCallback callback) {
         windowContentScaleEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScaleY(OnWindowContentScaleEventHandler.ScaleYCallback callback) {
+    public WindowEventsManager onScaleY(WinEvents.ScaleYCallback callback) {
         windowContentScaleEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScale(OnWindowContentScaleEventHandler.ScaleCallback callback) {
+    public WindowEventsManager onScale(WinEvents.ScaleCallback callback) {
         windowContentScaleEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onX(OnWindowPosEventHandler.XCallback callback) {
+    public WindowEventsManager onX(WinEvents.XCallback callback) {
         windowPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onY(OnWindowPosEventHandler.YCallback callback) {
+    public WindowEventsManager onY(WinEvents.YCallback callback) {
         windowPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onPosition(OnWindowPosEventHandler.PositionCallback callback) {
+    public WindowEventsManager onPosition(WinEvents.PositionCallback callback) {
         windowPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onIconify(OnWindowIconifyEventHandler.IconifyCallback callback) {
+    public WindowEventsManager onIconify(WinEvents.IconifyCallback callback) {
         windowIconifyEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onRestore(OnWindowIconifyEventHandler.RestoreCallback callback) {
+    public WindowEventsManager onRestore(WinEvents.RestoreCallback callback) {
         windowIconifyEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onMaximized(OnWindowMaximizedEventHandler.MaximizedCallback callback) {
+    public WindowEventsManager onMaximized(WinEvents.MaximizedCallback callback) {
         windowMaximizedEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onMinimized(OnWindowMaximizedEventHandler.MinimizedCallback callback) {
+    public WindowEventsManager onMinimized(WinEvents.MinimizedCallback callback) {
         windowMaximizedEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onFocused(OnWindowFocusedEventHandler.FocusedCallback callback) {
+    public WindowEventsManager onFocused(WinEvents.FocusedCallback callback) {
         windowFocusedEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onUnfocused(OnWindowFocusedEventHandler.UnfocusedCallback callback) {
+    public WindowEventsManager onUnfocused(WinEvents.UnfocusedCallback callback) {
         windowFocusedEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onRefresh(OnWindowRefreshEventHandler.RefreshCallback callback) {
+    public WindowEventsManager onRefresh(WinEvents.RefreshCallback callback) {
         windowRefreshEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onDrop(OnWindowDropEventHandler.DropCallback callback) {
+    public WindowEventsManager onDrop(WinEvents.DropCallback callback) {
         windowDropEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onCursorEntered(OnWindowCursorEnterEventHandler.CursorEnteredCallback callback) {
+    public WindowEventsManager onCursorEntered(WinEvents.CursorEnteredCallback callback) {
         windowCursorEnterEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onCursorExited(OnWindowCursorEnterEventHandler.CursorExitedCallback callback) {
+    public WindowEventsManager onCursorExited(WinEvents.CursorExitedCallback callback) {
         windowCursorEnterEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onCursorX(OnWindowCursorPosEventHandler.CursorXCallback callback) {
+    public WindowEventsManager onCursorX(WinEvents.CursorXCallback callback) {
         windowCursorPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onCursorY(OnWindowCursorPosEventHandler.CursorYCallback callback) {
+    public WindowEventsManager onCursorY(WinEvents.CursorYCallback callback) {
         windowCursorPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onCursorPos(OnWindowCursorPosEventHandler.CursorPosCallback callback) {
+    public WindowEventsManager onCursorPos(WinEvents.CursorPosCallback callback) {
         windowCursorPosEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScrollX(OnWindowScrollEventHandler.ScrollXCallback callback) {
+    public WindowEventsManager onScrollX(WinEvents.ScrollXCallback callback) {
         windowScrollEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScrollY(OnWindowScrollEventHandler.ScrollYCallback callback) {
+    public WindowEventsManager onScrollY(WinEvents.ScrollYCallback callback) {
         windowScrollEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onScroll(OnWindowScrollEventHandler.ScrollCallback callback) {
+    public WindowEventsManager onScroll(WinEvents.ScrollCallback callback) {
         windowScrollEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onChar(OnWindowCharEventHandler.CharCallback callback) {
+    public WindowEventsManager onChar(WinEvents.CharCallback callback) {
         windowCharEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onKey(OnWindowKeyEventHandler.KeyCallback callback) {
+    public WindowEventsManager onKey(WinEvents.KeyCallback callback) {
         windowKeyEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onMonitorConnected(OnWindowMonitorEventHandler.MonitorConnected callback) {
+    public WindowEventsManager onMonitorConnected(WinEvents.MonitorConnected callback) {
         windowMonitorEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onMonitorDisconnected(OnWindowMonitorEventHandler.MonitorDisconnected callback) {
+    public WindowEventsManager onMonitorDisconnected(WinEvents.MonitorDisconnected callback) {
         windowMonitorEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onMouse(OnWindowMouseEventHandler.MouseCallback callback) {
+    public WindowEventsManager onMouse(WinEvents.MouseCallback callback) {
         windowMouseEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onJoystickConnected(OnWindowJoystickEventHandler.JoystickConnectedCallback callback) {
+    public WindowEventsManager onJoystickConnected(WinEvents.JoystickConnectedCallback callback) {
         windowJoystickEventHandler.addCallback(callback);
         return this;
     }
 
-    public WindowEventsManager onJoystickDisconnected(OnWindowJoystickEventHandler.JoystickDisconnectedCallback callback) {
+    public WindowEventsManager onJoystickDisconnected(WinEvents.JoystickDisconnectedCallback callback) {
         windowJoystickEventHandler.addCallback(callback);
         return this;
     }

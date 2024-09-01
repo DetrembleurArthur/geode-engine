@@ -23,20 +23,12 @@ public class OnWindowMonitorEventHandler extends WindowCallbacksHandler implemen
             callback.free();
     }
 
-    public interface MonitorConnected extends WindowCallback {
-        void trigger();
-    }
-
-    public interface MonitorDisconnected extends WindowCallback {
-        void trigger();
-    }
-
     @Override
     public void invoke(long window, int event) {
         if(event == GLFW.GLFW_CONNECTED) {
-            trigger(MonitorConnected.class);
+            trigger(WinEvents.MonitorConnected.class);
         } else if(event == GLFW.GLFW_DISCONNECTED) {
-            trigger(MonitorDisconnected.class);
+            trigger(WinEvents.MonitorDisconnected.class);
         }
     }
 }

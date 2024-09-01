@@ -24,30 +24,18 @@ public class OnWindowCursorPosEventHandler extends WindowCallbacksHandler implem
             callback.free();
     }
 
-    public interface CursorXCallback extends WindowCallback {
-        void trigger(Double x);
-    }
-
-    public interface CursorYCallback extends WindowCallback {
-        void trigger(Double y);
-    }
-
-    public interface CursorPosCallback extends WindowCallback {
-        void trigger(Vector2f pos);
-    }
-
     private Vector2f position = new Vector2f();
 
     @Override
     public void invoke(long window, double x, double y) {
         if(position.x != x) {
-            trigger(CursorXCallback.class, x);
+            trigger(WinEvents.CursorXCallback.class, x);
         }
         if(position.y != y) {
-            trigger(CursorYCallback.class, y);
+            trigger(WinEvents.CursorYCallback.class, y);
         }
         if(position.x != x || position.y != y) {
-            trigger(CursorPosCallback.class, new Vector2f((float) x, (float) y));
+            trigger(WinEvents.CursorPosCallback.class, new Vector2f((float) x, (float) y));
         }
         position = new Vector2f((float) x, (float) y);
     }

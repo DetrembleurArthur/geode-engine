@@ -25,30 +25,18 @@ public class OnWindowFramebufferSizeEventHandler extends WindowCallbacksHandler 
             callback.free();
     }
 
-    public interface FbWidthCallback extends WindowCallback {
-        void trigger(Integer width);
-    }
-
-    public interface FbHeightCallback extends WindowCallback {
-        void trigger(Integer width);
-    }
-
-    public interface FbSizeCallback extends WindowCallback {
-        void trigger(Vector2i size);
-    }
-
     private Vector2i previousSize = new Vector2i();
 
     @Override
     public void invoke(long window, int width, int height) {
         if(width != previousSize.x) {
-            trigger(FbWidthCallback.class, width);
+            trigger(WinEvents.FbWidthCallback.class, width);
         }
         if(height != previousSize.y) {
-            trigger(FbHeightCallback.class, height);
+            trigger(WinEvents.FbHeightCallback.class, height);
         }
         if(width != previousSize.x || height != previousSize.y) {
-            trigger(FbSizeCallback.class, new Vector2i(width, height));
+            trigger(WinEvents.FbSizeCallback.class, new Vector2i(width, height));
         }
         previousSize = new Vector2i(width, height);
     }
