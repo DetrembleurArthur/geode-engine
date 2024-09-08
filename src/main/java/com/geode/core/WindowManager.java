@@ -23,6 +23,7 @@ public class WindowManager implements Initializable, Closeable {
     private WindowEventsManager windowEventsManager;
     private MouseManager mouseManager;
     private KeyManager keyManager;
+    private ControllerManager controllerManager;
     private boolean glfwInitialized = false;
     private Vector4f viewport = new Vector4f();
     private Runnable eventPolicyRunner;
@@ -63,9 +64,11 @@ public class WindowManager implements Initializable, Closeable {
                 windowEventsManager = new WindowEventsManager(window);
                 mouseManager = new MouseManager(window);
                 keyManager = new KeyManager(window);
+                controllerManager = new ControllerManager();
                 windowEventsManager.init();
                 mouseManager.init();
                 keyManager.init();
+                controllerManager.init();
                 viewport = new Vector4f(0, 0, window.getSize().x, window.getSize().y);
                 GL.createCapabilities();
                 glEnable(GL_BLEND);
@@ -86,6 +89,7 @@ public class WindowManager implements Initializable, Closeable {
     @Override
     public void close() throws Exception {
         logger.info("closing...");
+        controllerManager.close();
         mouseManager.close();
         keyManager.close();
         windowEventsManager.close();
@@ -116,6 +120,13 @@ public class WindowManager implements Initializable, Closeable {
 
     public void waitEventPolicy() {
         eventPolicyRunner = org.lwjgl.glfw.GLFW::glfwWaitEvents;
+    }
+
+    public void updateControllers() {
+
+        if(controllerManager.hasControllers()) {
+            controllerManager.update();
+        }
     }
 
     public void manageEvents() {
@@ -176,5 +187,21 @@ public class WindowManager implements Initializable, Closeable {
 
     public MouseManager getMouseManager() {
         return mouseManager;
+    }
+
+    public KeyManager getKeyManager() {
+        return keyManager;
+    }
+
+    public ControllerManager getControllerManager() {
+        return controllerManager;
+    }
+
+    public Runnable getEventPolicyRunner() {
+        return eventPolicyRunner;
+    }
+
+    public Runnable getHintCallback() {
+        return hintCallback;
     }
 }

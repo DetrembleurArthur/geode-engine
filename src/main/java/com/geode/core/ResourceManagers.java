@@ -6,13 +6,13 @@ import com.geode.exceptions.GeodeException;
 import java.util.HashMap;
 
 @Singleton
-public class ResourcesManager implements Initializable, Closeable {
+public class ResourceManagers implements Initializable, Closeable {
 
-    private static ResourcesManager instance;
+    private static ResourceManagers instance;
 
     private final HashMap<Class<? extends Resource>, ResourceManager<? extends Resource>> resourceManagers = new HashMap<>();
 
-    ResourcesManager() throws GeodeException {
+    ResourceManagers() throws GeodeException {
         if(instance == null) {
             instance = this;
         }
@@ -30,7 +30,7 @@ public class ResourcesManager implements Initializable, Closeable {
         return (ResourceManager<T>) resourceManagers.get(resourceClass);
     }
 
-    public static ResourcesManager getInstance() {
+    public static ResourceManagers getInstance() {
         return instance;
     }
 

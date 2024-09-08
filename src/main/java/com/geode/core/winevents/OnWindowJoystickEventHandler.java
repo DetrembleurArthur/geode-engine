@@ -24,11 +24,11 @@ public class OnWindowJoystickEventHandler extends WindowCallbacksHandler impleme
     }
 
     @Override
-    public void invoke(int window, int event) {
+    public void invoke(int jid, int event) {
         if(event == GLFW.GLFW_CONNECTED) {
-            trigger(WinEvents.JoystickConnectedCallback.class);
+            trigger(WinEvents.JoystickConnectedCallback.class, jid);
         } else if(event == GLFW.GLFW_DISCONNECTED) {
-            trigger(WinEvents.JoystickDisconnectedCallback.class);
+            trigger(WinEvents.JoystickDisconnectedCallback.class, jid);
         }
     }
 }

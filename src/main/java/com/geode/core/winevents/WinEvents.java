@@ -313,12 +313,12 @@ public class WinEvents {
     }
 
     public interface JoystickConnectedCallback extends WindowCallback {
-        void trigger();
+        void trigger(Integer jid);
         static JoystickConnectedCallback tagged(Object tag, JoystickConnectedCallback callback) {
             return new JoystickConnectedCallback() {
                 @Override
-                public void trigger() {
-                    callback.trigger();
+                public void trigger(Integer jid) {
+                    callback.trigger(jid);
                 }
 
                 @Override
@@ -330,12 +330,12 @@ public class WinEvents {
     }
 
     public interface JoystickDisconnectedCallback extends WindowCallback {
-        void trigger();
+        void trigger(Integer jid);
         static JoystickDisconnectedCallback tagged(Object tag, JoystickDisconnectedCallback callback) {
             return new JoystickDisconnectedCallback() {
                 @Override
-                public void trigger() {
-                    callback.trigger();
+                public void trigger(Integer jid) {
+                    callback.trigger(jid);
                 }
 
                 @Override

@@ -1,18 +1,14 @@
 package com.geode.graphics;
 
-import com.geode.core.Closeable;
-import com.geode.core.Initializable;
 import com.geode.core.Resource;
-import com.geode.core.SceneManager;
 import com.geode.exceptions.GeodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import java.io.*;
 
-public class Shader implements Initializable, Closeable, Resource {
+public class Shader implements Resource {
 
     private static final Logger logger = LogManager.getLogger(Shader.class);
 
@@ -109,5 +105,30 @@ public class Shader implements Initializable, Closeable, Resource {
             program = 0;
         }
         logger.info("shader closed");
+    }
+
+    public int getVertexShader() {
+        return vertexShader;
+    }
+
+    public int getFragmentShader() {
+        return fragmentShader;
+    }
+
+    public int getProgram() {
+        return program;
+    }
+
+    public String getVertexShaderPath() {
+        return vertexShaderPath;
+    }
+
+    public String getFragmentShaderPath() {
+        return fragmentShaderPath;
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return fragmentShader != 0 && vertexShader != 0 && program != 0;
     }
 }

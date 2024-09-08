@@ -1,5 +1,7 @@
 package com.geode.core;
 
+import com.geode.core.controller.MandatoryJoystickConnectedCallback;
+import com.geode.core.controller.MandatoryJoystickDisconnectedCallback;
 import com.geode.core.key.MandatoryKeyCallback;
 import com.geode.core.reflections.Singleton;
 import org.lwjgl.glfw.GLFW;
@@ -85,6 +87,8 @@ public class WindowEventsManager implements Initializable, Closeable {
 
     private void initMandatoryEvents() {
         onKey(new MandatoryKeyCallback());
+        onJoystickConnected(new MandatoryJoystickConnectedCallback());
+        onJoystickDisconnected(new MandatoryJoystickDisconnectedCallback());
     }
 
 

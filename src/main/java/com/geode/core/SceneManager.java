@@ -82,7 +82,7 @@ public class SceneManager implements Initializable, Closeable {
                         Artifact annotation = artifact.getAnnotation(Artifact.class);
                         if(Resource.class.isAssignableFrom(artifact.getType())) {
                             Class<? extends Resource> resourceClass = (Class<? extends Resource>) artifact.getType();
-                            ResourceManager<? extends Resource> manager = ResourcesManager.getInstance().get(resourceClass);
+                            ResourceManager<? extends Resource> manager = ResourceManagers.getInstance().get(resourceClass);
                             try {
                                 Resource resource = manager.getResource(annotation.value());
                                 if(resource == null)

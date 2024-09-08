@@ -17,7 +17,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     private static Application instance = null;
 
     private final WindowManager windowManager;
-    private final ResourcesManager resourcesManager;
+    private final ResourceManagers resourceManagers;
     private final ResourceLocator resourceLocator;
     private final String applicationPackage;
     private final PackageClassLoaderManager packageClassLoaderManager;
@@ -26,7 +26,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     private Application(String applicationPackage) throws GeodeException {
         this.applicationPackage = applicationPackage;
         resourceLocator = new ResourceLocator();
-        resourcesManager = new ResourcesManager();
+        resourceManagers = new ResourceManagers();
         windowManager = new WindowManager();
         packageClassLoaderManager = new PackageClassLoaderManager();
         packageClassLoaderManager.register(PackageClassLoaderManager.Defaults.SCENES, applicationPackage,
@@ -40,9 +40,9 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         resourceLocator.setResourceFolder("./src/main/resources/");
         resourceLocator.setLocation(Shader.class, "shaders");
         windowManager.init();
-        resourcesManager.init();
-        resourcesManager.register(Shader.class, new ShaderManager());
-        resourcesManager.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);
+        resourceManagers.init();
+        resourceManagers.register(Shader.class, new ShaderManager());
+        resourceManagers.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);
         sceneManager.init();
         logger.info("initialized !");
     }
@@ -60,13 +60,14 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     public void close() throws Exception {
         logger.info("closing...");
         sceneManager.close();
-        resourcesManager.close();
+        resourceManagers.close();
         windowManager.close();
         Objects.requireNonNull(GLFW.glfwSetErrorCallback(null)).free();
         logger.info("closed !");
     }
 
     private void loop(Window window) {
+        windowManager.updateControllers();
         Scene currentScene = sceneManager.getCurrent();
         double delta = Time.auto_update_delta();
         window.clear();
@@ -74,6 +75,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         currentScene.draw(delta);
         window.swap();
         windowManager.manageEvents();
+
     }
 
     public static Application create(String applicationPackage) throws GeodeException {

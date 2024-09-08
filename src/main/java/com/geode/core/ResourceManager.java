@@ -17,7 +17,6 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
 
     public T addResource(String name, T resource) throws GeodeException {
         if(!resources.containsKey(name)) {
-            resource.init();
             resources.put(name, resource);
         }
         return resource;
@@ -35,7 +34,8 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
     public void close() throws Exception {
         resources.forEach((s, resource) -> {
             try {
-                resource.close();
+                if(resource.isLoaded())
+                    resource.close();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
