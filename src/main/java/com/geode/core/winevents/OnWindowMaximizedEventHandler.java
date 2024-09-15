@@ -3,7 +3,6 @@ package com.geode.core.winevents;
 import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWWindowIconifyCallbackI;
 import org.lwjgl.glfw.GLFWWindowMaximizeCallback;
 import org.lwjgl.glfw.GLFWWindowMaximizeCallbackI;
 

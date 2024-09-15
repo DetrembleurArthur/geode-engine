@@ -1,10 +1,10 @@
 package com.geode.core;
 
-import com.geode.core.controller.MandatoryJoystickConnectedCallback;
-import com.geode.core.controller.MandatoryJoystickDisconnectedCallback;
-import com.geode.core.key.MandatoryKeyCallback;
+import com.geode.core.winevents.mandatory.MandatoryFrameBufferSizeCallback;
+import com.geode.core.winevents.mandatory.MandatoryJoystickConnectedCallback;
+import com.geode.core.winevents.mandatory.MandatoryJoystickDisconnectedCallback;
+import com.geode.core.winevents.mandatory.MandatoryKeyCallback;
 import com.geode.core.reflections.Singleton;
-import org.lwjgl.glfw.GLFW;
 
 import com.geode.core.winevents.*;
 import com.geode.exceptions.GeodeException;
@@ -86,6 +86,7 @@ public class WindowEventsManager implements Initializable, Closeable {
     }
 
     private void initMandatoryEvents() {
+        onFbSize(new MandatoryFrameBufferSizeCallback(WindowManager.getInstance(), Application.getInstance()));
         onKey(new MandatoryKeyCallback());
         onJoystickConnected(new MandatoryJoystickConnectedCallback());
         onJoystickDisconnected(new MandatoryJoystickDisconnectedCallback());

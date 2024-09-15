@@ -7,8 +7,12 @@ import com.geode.core.reflections.Singleton;
 import com.geode.core.mouse.MouseInput;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Image;
+import com.geode.graphics.camera.Camera2D;
+import com.geode.utils.Utils;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MathUtil;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -49,8 +53,9 @@ public class MouseManager implements Initializable, Closeable {
         return new Vector2i((int)x[0], (int)y[0]);
     }
 
-    public Vector2i getPosition(Object camera) {
-        return null;
+    public Vector2i getPosition(Camera2D camera) {
+        Vector2i mp = getPosition();
+        return Utils.screenToWorld(mp, camera);
     }
 
     public void hide() {
@@ -65,6 +70,15 @@ public class MouseManager implements Initializable, Closeable {
     public void captured()
     {
         glfwSetInputMode(window.getPointer(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
+    }
+
+    public void setPosition(Vector2i position) {
+        glfwSetCursorPos(window.getPointer(), position.x, position.y);
+    }
+
+    public void center() {
+        Vector2i pos = window.getSize().div(2);
+        glfwSetCursorPos(window.getPointer(), pos.x, pos.y);
     }
 
     public void sticky(boolean value)

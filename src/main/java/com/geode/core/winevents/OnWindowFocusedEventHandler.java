@@ -5,7 +5,6 @@ import com.geode.exceptions.GeodeException;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowFocusCallbackI;
-import org.lwjgl.glfw.GLFWWindowMaximizeCallbackI;
 
 public class OnWindowFocusedEventHandler extends WindowCallbacksHandler implements GLFWWindowFocusCallbackI {
     public OnWindowFocusedEventHandler(WindowEventsManager windowEventManager) {

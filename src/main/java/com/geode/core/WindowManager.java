@@ -2,13 +2,15 @@ package com.geode.core;
 
 import com.geode.core.reflections.Singleton;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.camera.Camera;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
-import org.joml.Vector4f;
+import org.joml.Vector4i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -25,7 +27,7 @@ public class WindowManager implements Initializable, Closeable {
     private KeyManager keyManager;
     private ControllerManager controllerManager;
     private boolean glfwInitialized = false;
-    private Vector4f viewport = new Vector4f();
+    private Vector4i viewport = new Vector4i();
     private Runnable eventPolicyRunner;
     private Runnable hintCallback;
 
@@ -48,7 +50,7 @@ public class WindowManager implements Initializable, Closeable {
             if(glfwInitialized) {
                 GLFWErrorCallback.createPrint(System.err).set();
                 logger.info("glfw version: {}", GLFW.glfwGetVersionString());
-                glfwWindowHint(GLFW_SAMPLES, 4);
+                glfwWindowHint(GLFW_SAMPLES, 8);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
                 glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
                 glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -69,12 +71,13 @@ public class WindowManager implements Initializable, Closeable {
                 mouseManager.init();
                 keyManager.init();
                 controllerManager.init();
-                viewport = new Vector4f(0, 0, window.getSize().x, window.getSize().y);
+                viewport = new Vector4i(0, 0, window.getSize().x, window.getSize().y);
                 GL.createCapabilities();
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_MULTISAMPLE);
                 glEnable(GL_LINE_SMOOTH);
+                GL11.glDisable(GL11.GL_CULL_FACE); // Active le culling des faces
             } else {
                 logger.error("glfw can not be initialized");
                 throw new GeodeException("glfw initialization failed");
@@ -106,7 +109,7 @@ public class WindowManager implements Initializable, Closeable {
         return glfwInitialized;
     }
 
-    public Vector4f getViewport() {
+    public Vector4i getViewport() {
         return viewport;
     }
 
@@ -203,5 +206,27 @@ public class WindowManager implements Initializable, Closeable {
 
     public Runnable getHintCallback() {
         return hintCallback;
+    }
+
+    public void adaptViewport(Camera camera) {
+        Vector2i size = getWindow().getSize();
+        setViewport(new Vector4i(0, 0, size.x, size.y));
+        window.resetVpAspectRatio();
+        if(camera != null) {
+            camera.adaptOnResize(this);
+        }
+    }
+
+    void resize(Vector2i size, Camera camera) {
+        Vector2i wsize = window.getSize();
+        size.x = size.x > 0 ? size.x : wsize.x;
+        size.y = size.y > 0 ? size.y : wsize.y;
+        window.setSize(size);
+        adaptViewport(camera);
+    }
+
+    public void setViewport(Vector4i viewport) {
+        this.viewport = viewport;
+        glViewport(viewport.x, viewport.y, viewport.z, viewport.w);
     }
 }

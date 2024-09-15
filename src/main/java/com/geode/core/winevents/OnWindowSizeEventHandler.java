@@ -4,7 +4,6 @@ import com.geode.core.WindowEventsManager;
 import com.geode.exceptions.GeodeException;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWWindowCloseCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallbackI;
 

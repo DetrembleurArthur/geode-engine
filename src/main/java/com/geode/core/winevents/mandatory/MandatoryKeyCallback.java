@@ -1,5 +1,6 @@
-package com.geode.core.key;
+package com.geode.core.winevents.mandatory;
 
+import com.geode.core.key.KeyInput;
 import com.geode.core.KeyManager;
 import com.geode.core.winevents.WinEvents;
 

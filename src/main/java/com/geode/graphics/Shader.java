@@ -4,9 +4,17 @@ import com.geode.core.Resource;
 import com.geode.exceptions.GeodeException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL20C;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.*;
+import java.nio.FloatBuffer;
+
+import static org.lwjgl.system.MemoryUtil.memFree;
 
 public class Shader implements Resource {
 
@@ -88,6 +96,27 @@ public class Shader implements Resource {
             throw new RuntimeException(e);
         }
         logger.info("shader created");
+    }
+
+    public void use() {
+        GL20.glUseProgram(program);
+    }
+
+    public void unuse() {
+        GL20.glUseProgram(0);
+    }
+
+    public void setUniformMatrix4fv(Matrix4f matrix4fv, String uniformName) {
+        int loc = GL20.glGetUniformLocation(program, uniformName);
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(16); //4 x 4
+        matrix4fv.get(buffer);
+        GL20.glUniformMatrix4fv(loc, false, buffer);
+        memFree(buffer);
+    }
+
+    public void setUniformVector4fv(Vector4f vector4fv, String uniformName) {
+        int loc = GL20.glGetUniformLocation(program, uniformName);
+        GL20.glUniform4fv(loc, new float[]{vector4fv.x, vector4fv.y, vector4fv.z, vector4fv.w});
     }
 
     @Override

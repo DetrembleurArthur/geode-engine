@@ -66,7 +66,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         logger.info("closed !");
     }
 
-    private void loop(Window window) {
+    public void loop(Window window) {
         windowManager.updateControllers();
         Scene currentScene = sceneManager.getCurrent();
         double delta = Time.auto_update_delta();
