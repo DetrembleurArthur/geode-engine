@@ -2,11 +2,10 @@ package com.geode.graphics.renderer;
 
 import com.geode.entity.Transform;
 import com.geode.graphics.Shader;
+import com.geode.graphics.Texture;
 import com.geode.graphics.camera.Camera;
 import com.geode.graphics.meshing.Mesh;
 import org.joml.Vector4f;
-
-import java.util.Collection;
 
 public class Renderer<T extends Camera> {
     protected T camera;
@@ -26,6 +25,18 @@ public class Renderer<T extends Camera> {
         shader.setUniformMatrix4fv(camera.updateView(), "uView");
         shader.setUniformVector4fv(new Vector4f(1, 1, 0, 1), "uColor");
         mesh.uploadToGPU();
+    }
+
+    public void render(Transform transform, Mesh mesh, Texture texture) {
+        shader.setUniformMatrix4fv(transform.getModel(), "uModel");
+        shader.setUniformMatrix4fv(camera.updateProjection(), "uProjection");
+        shader.setUniformMatrix4fv(camera.updateView(), "uView");
+        shader.setUniformVector4fv(new Vector4f(1, 1, 0, 1), "uColor");
+        texture.active();
+        texture.bind();
+        shader.setUniformTexture(0, "texture1");
+        mesh.uploadToGPU();
+        texture.unbind();
     }
 
     public void start() {

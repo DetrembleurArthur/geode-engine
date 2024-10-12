@@ -19,7 +19,13 @@ public class Image implements Initializable, Closeable {
     private GLFWImage glfwImage;
 
     public Image(String filename) throws GeodeException {
+        this(filename, false);
+    }
+
+    public Image(String filename, boolean init) throws GeodeException {
         this.filename = filename;
+        if(init)
+            init();
     }
 
     @Override
@@ -41,7 +47,7 @@ public class Image implements Initializable, Closeable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if(image != null) {
             STBImage.stbi_image_free(image);
         }
@@ -55,14 +61,24 @@ public class Image implements Initializable, Closeable {
     }
 
     public ByteBuffer getImage() {
-        return image;
+        return image.asReadOnlyBuffer();
     }
 
     public Vector2i getSize() {
-        return size;
+        return new Vector2i(size);
     }
 
     public GLFWImage getGlfwImage() {
         return glfwImage;
+    }
+
+    public Texture asTexture() throws GeodeException {
+        return new Texture(this);
+    }
+
+    public Texture asTextureOnce() throws GeodeException {
+        Texture texture = asTexture();
+        close();
+        return texture;
     }
 }

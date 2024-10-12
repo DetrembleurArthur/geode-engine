@@ -7,7 +7,6 @@ import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.entity.Transform;
 import com.geode.exceptions.GeodeException;
-import com.geode.graphics.camera.Camera2D;
 import com.geode.graphics.camera.Camera3D;
 import com.geode.graphics.meshing.Mesh;
 import com.geode.graphics.meshing.MeshAttribute;
@@ -18,12 +17,11 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-@SceneEntry(value = "my_scene", first = true)
-public class MyScene extends Scene {
+@SceneEntry(value = "my_3d_scene", first = false)
+public class My3DScene extends Scene {
 
     public @Inject Application app;
     public @Inject WindowManager windowManager;
@@ -45,6 +43,11 @@ public class MyScene extends Scene {
     @Override
     public void init() {
 
+
+    }
+
+    @Override
+    public void select() {
         windowManager.getWindow().setClearColor(new Vector4f(0f, 0, 0, 1));
         singleton.sayHello();
 
@@ -137,7 +140,7 @@ public class MyScene extends Scene {
                 // Face bas
                 20, 21, 22,
                 20, 22, 23
-        }, false);
+        });
 
 
 

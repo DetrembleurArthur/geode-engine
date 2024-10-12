@@ -59,6 +59,9 @@ public class SceneManager implements Initializable, Closeable {
                         throw new RuntimeException(e);
                     }
                 });
+        if(currentScene != null) {
+            currentScene.select();
+        }
         sceneClasses.clear();
         logger.info("SceneManager initialize");
     }
@@ -84,7 +87,7 @@ public class SceneManager implements Initializable, Closeable {
                             Class<? extends Resource> resourceClass = (Class<? extends Resource>) artifact.getType();
                             ResourceManager<? extends Resource> manager = ResourceManagers.getInstance().get(resourceClass);
                             try {
-                                Resource resource = manager.getResource(annotation.value());
+                                Resource resource = manager.getResource(resourceHolder.value() + "." + annotation.value());
                                 if(resource == null)
                                     resource = manager.addResource(annotation.value(), resourceHolder.value(), annotation.ext(), ResourceLocator.getInstance());
 
@@ -117,7 +120,7 @@ public class SceneManager implements Initializable, Closeable {
         });
     }
 
-    public void setCurrent(String id) {
+    public void setCurrent(String id) throws GeodeException {
         Scene scene = scenes.get(id);
         if(scene != null) {
             if(scene != currentScene) {

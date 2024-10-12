@@ -9,7 +9,8 @@ public enum Extensions {
         SOU_MP3("mp3"),
         SOU_MP4("mp4"),
         SOU_OGG("ogg"),
-        SOU_WAV("wav");
+        SOU_WAV("wav"),
+        SETTINGS("properties");
 
     private final String extension;
 

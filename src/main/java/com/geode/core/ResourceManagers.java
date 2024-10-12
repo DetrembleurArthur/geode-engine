@@ -2,6 +2,8 @@ package com.geode.core;
 
 import com.geode.core.reflections.Singleton;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Shader;
+import com.geode.graphics.Texture;
 
 import java.util.HashMap;
 
@@ -47,6 +49,8 @@ public class ResourceManagers implements Initializable, Closeable {
 
     @Override
     public void init() throws GeodeException {
-
+        register(Shader.class, new ShaderManager());
+        register(Texture.class, new TextureManager());
+        register(Settings.class, new SettingsManager());
     }
 }

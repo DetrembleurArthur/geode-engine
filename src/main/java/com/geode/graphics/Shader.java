@@ -2,17 +2,20 @@ package com.geode.graphics;
 
 import com.geode.core.Resource;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.meshing.MeshAttribute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL20C;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.*;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.system.MemoryUtil.memFree;
 
@@ -25,10 +28,43 @@ public class Shader implements Resource {
     private int program = 0;
     private final String vertexShaderPath;
     private final String fragmentShaderPath;
+    private final ArrayList<MeshAttribute> meshAttributes = new ArrayList<>();
+
+    public Shader(String normalizeResourceManagerFilename) throws GeodeException {
+        int dotIndex = normalizeResourceManagerFilename.lastIndexOf('.');
+        if (dotIndex != -1) {
+            vertexShaderPath = normalizeResourceManagerFilename.substring(0, dotIndex) + "_vertex" + normalizeResourceManagerFilename.substring(dotIndex);
+            fragmentShaderPath = normalizeResourceManagerFilename.substring(0, dotIndex) + "_fragment" + normalizeResourceManagerFilename.substring(dotIndex);
+        }
+        else throw new GeodeException(normalizeResourceManagerFilename + " must be a noramlized resource manager path");
+    }
 
     public Shader(String vertexShaderPath, String fragmentShaderPath) {
         this.vertexShaderPath = vertexShaderPath;
         this.fragmentShaderPath = fragmentShaderPath;
+    }
+
+    private void parseLayoutString(String layoutString) {
+        String regex = "layout\\s*\\(location=(\\d+)\\)\\s*in\\s*(\\w+)\\s*(\\w+);";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(layoutString);
+        if (matcher.matches()) {
+            String location = matcher.group(1);
+            String vectorType = matcher.group(2);
+            String variableName = matcher.group(3);
+            logger.info("location: " + location);
+            logger.info("vector: " + vectorType);
+            logger.info("variable: " + variableName);
+            try {
+                MeshAttribute attribute = new MeshAttribute(
+                        Integer.parseInt(String.valueOf(vectorType.charAt(vectorType.length() - 1))),
+                        vectorType.charAt(0) == 'v' ? GL11.GL_FLOAT : GL11.GL_INT,
+                        vectorType.charAt(0) == 'v' ? Float.BYTES : Integer.BYTES);
+                meshAttributes.add(attribute);
+            } catch (Exception e) {
+
+            }
+        }
     }
 
     private String[] loadSources() throws IOException {
@@ -38,6 +74,7 @@ public class Shader implements Resource {
             String buffer;
             while((buffer = br.readLine()) != null) {
                 sources[0] += buffer + "\n";
+                parseLayoutString(buffer);
             }
         }
         try(BufferedReader br = new BufferedReader(new FileReader(fragmentShaderPath))) {
@@ -119,6 +156,11 @@ public class Shader implements Resource {
         GL20.glUniform4fv(loc, new float[]{vector4fv.x, vector4fv.y, vector4fv.z, vector4fv.w});
     }
 
+    public void setUniformTexture(int texId, String uniformName) {
+        int loc = GL20.glGetUniformLocation(program, uniformName);
+        GL20.glUniform1i(loc, texId);
+    }
+
     @Override
     public void close() throws Exception {
         if(vertexShader != 0) {
@@ -159,5 +201,9 @@ public class Shader implements Resource {
     @Override
     public boolean isLoaded() {
         return fragmentShader != 0 && vertexShader != 0 && program != 0;
+    }
+
+    public ArrayList<MeshAttribute> getMeshAttributes() {
+        return meshAttributes;
     }
 }

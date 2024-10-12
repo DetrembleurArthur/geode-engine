@@ -49,4 +49,12 @@ public class MeshAttribute {
         }
         return size;
     }
+
+    public static MeshAttribute createFloat(int elements) {
+        return new MeshAttribute(elements, GL11.GL_FLOAT, Float.BYTES);
+    }
+
+    public static MeshAttribute createInt(int elements) {
+        return new MeshAttribute(elements, GL11.GL_INT, Integer.BYTES);
+    }
 }

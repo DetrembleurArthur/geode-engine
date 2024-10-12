@@ -41,7 +41,7 @@ public class Mesh implements Initializable, Closeable {
         ebo = GL30.glGenBuffers();
     }
 
-    public void fill(List<MeshAttribute> meshAttributes, float[] vertices, int[] elementsData, boolean textured) {
+    public void fill(List<MeshAttribute> meshAttributes, float[] vertices, int[] elementsData) {
         bind();
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
         GL30.glBufferData(GL15.GL_ARRAY_BUFFER, vertices, dynamic ? GL15.GL_DYNAMIC_DRAW : GL15.GL_STATIC_DRAW);
@@ -59,7 +59,6 @@ public class Mesh implements Initializable, Closeable {
         GL30.glBindVertexArray(0);
         this.attributes = meshAttributes.size();
         this.elements = elementsData.length;
-        this.textured = textured;
     }
 
     @Override
@@ -152,6 +151,10 @@ public class Mesh implements Initializable, Closeable {
 
     public boolean isTextured() {
         return textured;
+    }
+
+    public void setTextured(boolean textured) {
+        this.textured = textured;
     }
 
     public void setPrimitive(int primitive) {

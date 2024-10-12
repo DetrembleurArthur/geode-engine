@@ -5,6 +5,7 @@ import com.geode.core.reflections.PackageClassLoaderManager;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Shader;
+import com.geode.graphics.Texture;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -34,14 +35,19 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         sceneManager = new SceneManager(packageClassLoaderManager.get(PackageClassLoaderManager.Defaults.SCENES));
     }
 
+    public String getApplicationPackage() {
+        return applicationPackage;
+    }
+
     @Override
     public void init() throws GeodeException {
         logger.info("initializing...");
         resourceLocator.setResourceFolder("./src/main/resources/");
         resourceLocator.setLocation(Shader.class, "shaders");
+        resourceLocator.setLocation(Texture.class, "textures");
+        resourceLocator.setLocation(Settings.class, "settings");
         windowManager.init();
         resourceManagers.init();
-        resourceManagers.register(Shader.class, new ShaderManager());
         resourceManagers.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);
         sceneManager.init();
         logger.info("initialized !");
@@ -72,7 +78,11 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         double delta = Time.auto_update_delta();
         window.clear();
         currentScene.update(delta);
-        currentScene.draw(delta);
+        try {
+            currentScene.draw(delta);
+        } catch (GeodeException e) {
+            e.printStackTrace();
+        }
         window.swap();
         windowManager.manageEvents();
 
