@@ -269,4 +269,16 @@ public class Camera3D extends Camera
 	public void disableDepthTest() {
 		GL11.glEnable(GL_DEPTH_TEST);
 	}
+
+	public Vector2f getOldMouse() {
+		return oldMouse;
+	}
+
+	public float getVerticalAngle() {
+		return verticalAngle;
+	}
+
+	public float getHorizontalAngle() {
+		return horizontalAngle;
+	}
 }

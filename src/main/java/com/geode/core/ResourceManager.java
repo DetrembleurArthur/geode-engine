@@ -27,18 +27,19 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
 
     public T addResource(String name, String subPath, Extensions ext, ResourceLocator locator) throws GeodeException {
         String fullName = subPath + "." + name;
-        if(resources.containsKey(fullName))
+        if (resources.containsKey(fullName))
             return getResource(fullName);
-        if(!subPath.isEmpty() && !subPath.endsWith("/"))
+        if (!subPath.isEmpty() && !subPath.endsWith("/"))
             subPath += "/";
         String extention = ext.toString();
-        if(ext == Extensions.NONE)
+        if (ext == Extensions.NONE)
             extention = defaultExt.toString();
-        String location = locator.getLocation(clazz) + subPath + managerId + "_" + name + "." + extention;
+        String location = extention.equals(Extensions.NONE.toString()) ? locator.getLocation(clazz) + subPath + managerId + "_" + name : locator.getLocation(clazz) + subPath + managerId + "_" + name + "." + extention;
         try {
             T resource = clazz.getConstructor(String.class).newInstance(location);
             return addResource(fullName, resource);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
             throw new GeodeException(e);
         }
     }
@@ -48,7 +49,7 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
     }
 
     public T addResource(String name, T resource) throws GeodeException {
-        if(!resources.containsKey(name)) {
+        if (!resources.containsKey(name)) {
             logger.info("add Resource<{}> : {}", resource.getClass().getName(), name);
             resources.put(name, resource);
         }
@@ -67,7 +68,7 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
     public void close() throws Exception {
         resources.forEach((s, resource) -> {
             try {
-                if(resource.isLoaded()) {
+                if (resource.isLoaded()) {
                     logger.info("close Resource<" + resource.getClass().getName() + "> : " + s);
                     resource.close();
                 }

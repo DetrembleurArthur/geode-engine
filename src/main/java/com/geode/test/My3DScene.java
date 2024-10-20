@@ -1,26 +1,20 @@
 package com.geode.test;
 
 import com.geode.core.*;
-import com.geode.core.controller.Controller;
-import com.geode.core.controller.Gamepad;
+import com.geode.core.components.render.RendererComponent;
+import com.geode.core.mouse.ButtonState;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
-import com.geode.entity.Transform;
+import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.camera.Camera2D;
 import com.geode.graphics.camera.Camera3D;
-import com.geode.graphics.meshing.Mesh;
-import com.geode.graphics.meshing.MeshAttribute;
 import com.geode.graphics.renderer.Renderer;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-@SceneEntry(value = "my_3d_scene", first = false)
+@SceneEntry(value = "my_3d_scene", first = true)
 public class My3DScene extends Scene {
 
     public @Inject Application app;
@@ -33,12 +27,12 @@ public class My3DScene extends Scene {
 
     public @Inject MyResources resources;
 
-    public @Inject ControllerManager controllerManager;
 
-    private Renderer<Camera3D> renderer;
+    private SpacialGameObject gameObject;
+    private SpacialGameObject cube;
+    private Camera3D camera3D;
+    private Camera3D localCamera;
 
-    private Transform transform = new Transform();
-    private Mesh mesh = new Mesh();
 
     @Override
     public void init() {
@@ -47,108 +41,50 @@ public class My3DScene extends Scene {
     }
 
     @Override
-    public void select() {
-        windowManager.getWindow().setClearColor(new Vector4f(0f, 0, 0, 1));
+    public void select() throws GeodeException {
+        windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
         singleton.sayHello();
 
-
+        gameObject = new SpacialGameObject();
+        gameObject.init();
 
         try {
-            resources.classic.init();
+            resources.shader3d.init();
+            resources.gun.init();
+            resources.cube.init();
+            resources.texture.init();
 
-            mesh.init();
+            camera3D = new Camera3D(windowManager);
+            localCamera = new Camera3D(windowManager);
+            RendererComponent rendererComponent = gameObject.getComponent(RendererComponent.class);
+            rendererComponent.setTexture(resources.gun.getTextures().get(0));
+            rendererComponent.setRenderer(new Renderer<>(localCamera, resources.shader3d));
+            rendererComponent.setMesh(resources.gun.getMesh());
+            rendererComponent.getRenderer().setColor(new Vector4f(1, 1, 1, 1));
+            camera3D.getProjectionSettings().setZfar(1000000);
+            camera3D.enableDepthTest();
+
+            gameObject.getTransform().setSize(new Vector3f(0.001f, 0.001f, 0.001f));
+            gameObject.getTransform().setPosition(localCamera.getPosition());
+            gameObject.getTransform().getRotation().x += 90;
+            gameObject.getTransform().getRotation().y += 180;
+            gameObject.getTransform().getPosition().add(0.01f, -0.015f, -0.04f);
+            //gameObject.getTransform().setOrigin(camera3D.getPosition());
+
+            cube = new SpacialGameObject();
+            cube.init();
+            rendererComponent = cube.getComponent(RendererComponent.class);
+            rendererComponent.setTexture(resources.cube.getTextures().get(0));
+            rendererComponent.setRenderer(new Renderer<>(camera3D, resources.shader3d));
+            rendererComponent.setMesh(resources.cube.getMesh());
+            rendererComponent.getRenderer().setColor(new Vector4f(1, 1, 1, 1));
+            cube.getTransform().setSize(new Vector3f(1000, 1000, 1000));
+
+
 
         } catch (GeodeException e) {
             throw new RuntimeException(e);
         }
-
-        renderer = new Renderer<>();
-        renderer.setCamera(new Camera3D(windowManager));
-        renderer.setShader(resources.classic);
-
-        renderer.getCamera().getProjectionSettings().setZfar(1000000);
-        renderer.getCamera().enableDepthTest();
-
-        mesh.setDynamic(false);
-        mesh.asTriangle();
-        mesh.setLineWeight(3);
-
-        MeshAttribute posAttribute = new MeshAttribute(3, GL11.GL_FLOAT, Float.BYTES);
-        MeshAttribute colorAttribute = new MeshAttribute(4, GL11.GL_FLOAT, Float.BYTES);
-        List<MeshAttribute> attributes = new ArrayList<>();
-        attributes.add(posAttribute);
-        attributes.add(colorAttribute);
-        // Vertex data
-        mesh.fill(attributes, new float[]{
-                // Face arrière (Rouge)
-                0, 0, 0,   1, 0, 0, 1,  // Sommet 0 : arrière-bas-gauche, rouge
-                0, 1, 0,   1, 0, 0, 1,  // Sommet 1 : arrière-haut-gauche, rouge
-                1, 1, 0,   1, 0, 0, 1,  // Sommet 2 : arrière-haut-droit, rouge
-                1, 0, 0,   1, 0, 0, 1,  // Sommet 3 : arrière-bas-droit, rouge
-
-                // Face avant (Vert)
-                0, 0, 1,   0, 1, 0, 1,  // Sommet 4 : avant-bas-gauche, vert
-                0, 1, 1,   0, 1, 0, 1,  // Sommet 5 : avant-haut-gauche, vert
-                1, 1, 1,   0, 1, 0, 1,  // Sommet 6 : avant-haut-droit, vert
-                1, 0, 1,   0, 1, 0, 1,  // Sommet 7 : avant-bas-droit, vert
-
-                // Face gauche (Bleu)
-                0, 0, 0,   0, 0, 1, 1,  // Sommet 0 : arrière-bas-gauche, bleu
-                0, 1, 0,   0, 0, 1, 1,  // Sommet 1 : arrière-haut-gauche, bleu
-                0, 1, 1,   0, 0, 1, 1,  // Sommet 5 : avant-haut-gauche, bleu
-                0, 0, 1,   0, 0, 1, 1,  // Sommet 4 : avant-bas-gauche, bleu
-
-                // Face droite (Jaune)
-                1, 0, 0,   1, 1, 0, 1,  // Sommet 3 : arrière-bas-droit, jaune
-                1, 1, 0,   1, 1, 0, 1,  // Sommet 2 : arrière-haut-droit, jaune
-                1, 1, 1,   1, 1, 0, 1,  // Sommet 6 : avant-haut-droit, jaune
-                1, 0, 1,   1, 1, 0, 1,  // Sommet 7 : avant-bas-droit, jaune
-
-                // Face haut (Magenta)
-                0, 1, 0,   1, 0, 1, 1,  // Sommet 1 : arrière-haut-gauche, magenta
-                1, 1, 0,   1, 0, 1, 1,  // Sommet 2 : arrière-haut-droit, magenta
-                1, 1, 1,   1, 0, 1, 1,  // Sommet 6 : avant-haut-droit, magenta
-                0, 1, 1,   1, 0, 1, 1,  // Sommet 5 : avant-haut-gauche, magenta
-
-                // Face bas (Cyan)
-                0, 0, 0,   0, 1, 1, 1,  // Sommet 0 : arrière-bas-gauche, cyan
-                1, 0, 0,   0, 1, 1, 1,  // Sommet 3 : arrière-bas-droit, cyan
-                1, 0, 1,   0, 1, 1, 1,  // Sommet 7 : avant-bas-droit, cyan
-                0, 0, 1,   0, 1, 1, 1   // Sommet 4 : avant-bas-gauche, cyan
-        }, new int[]{
-                // Indices corrigés pour les faces
-                // Face arrière
-                0, 1, 2,
-                0, 2, 3,
-
-                // Face avant
-                4, 5, 6,
-                4, 6, 7,
-
-                // Face gauche
-                8, 9, 10,
-                8, 10, 11,
-
-                // Face droite
-                12, 13, 14,
-                12, 14, 15,
-
-                // Face haut
-                16, 17, 18,
-                16, 18, 19,
-
-                // Face bas
-                20, 21, 22,
-                20, 22, 23
-        });
-
-
-
-
-        transform.setPosition(new Vector3f(100, 100, 10));
-        transform.setSize(new Vector3f(10, 10, 10));
-        transform.setCenterOrigin();
-
 
         mouseManager.lock();
 
@@ -161,30 +97,51 @@ public class My3DScene extends Scene {
 
     }
 
+    float v = 0;
     @Override
     public void update(double dt) {
-        renderer.getCamera().update(new Vector2f(mouseManager.getPosition()));
-        renderer.getCamera().activateKeys();
-        transform.getRotation().add((float) (50*dt), (float) (50*dt), (float) (50*dt));
-        //transform.getSize().add((float) (10f*dt), (float) (10.0*dt), (float) (10.0*dt));
-        transform.setDirty(true);
 
-        if(controllerManager.hasControllers()) {
-            Controller controller = controllerManager.getAvailableController();
-            if(controller.isPressedOnce(Gamepad.A))
-                windowManager.getWindow().setPosition(new Vector2f(new Random().nextInt()%1000, new Random().nextInt()%800));
+        //cube.getTransform().setPosition(camera3D.getPosition());
+
+       // gameObject.getTransform().setOrigin(camera3D.getPosition());
+        //cube.getTransform().setRotation(cameraRotation);
+
+        /*cube.getTransform().getRotation().x = camera3D.getHorizontalAngle();
+        cube.getTransform().getRotation().y = camera3D.getVerticalAngle();*/
+        //camera3D.updateFps(new Vector2f(mouseManager.getPosition()), cube.getTransform().getPosition(), cube.getTransform().getRotation());
+        camera3D.update(new Vector2f(mouseManager.getPosition()));
+
+        camera3D.activateKeys();
+        cube.getTransform().setDirty(true);
+
+        if(MouseManager.getInstance().isRightButton(ButtonState.PRESSED)) {
+            gameObject.getTransform().setPosition(new Vector3f(0f, -0.011f, -0.020f).add(localCamera.getPosition()));
+            app.getWindowManager().adaptViewport(localCamera);
+            app.getWindowManager().adaptViewport(camera3D);
+        } else {
+            gameObject.getTransform().setPosition(new Vector3f(0.01f, -0.015f, -0.04f).add(localCamera.getPosition()));
         }
     }
 
     @Override
-    public void draw(double dt) {
-        renderer.start();
-        renderer.render(transform, mesh);
-        renderer.stop();
+    public void draw(double dt) throws GeodeException {
+        RendererComponent rendererComponent;
+
+        rendererComponent = cube.getComponent(RendererComponent.class);
+        if(rendererComponent != null) {
+            rendererComponent.render();
+        }
+        rendererComponent = gameObject.getComponent(RendererComponent.class);
+        if(rendererComponent != null) {
+            rendererComponent.render();
+        }
     }
 
     @Override
     public void close() throws Exception {
-        mesh.close();
+        if(gameObject != null)
+            gameObject.close();
+        if(cube != null)
+            cube.close();
     }
 }

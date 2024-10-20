@@ -26,7 +26,7 @@ public class RendererComponent extends StaticComponent {
 
     @Override
     public void close() throws Exception {
-        if(mesh != null) {
+        if(mesh != null && this.mesh.isReady()) {
             mesh.close();
         }
     }
@@ -44,7 +44,7 @@ public class RendererComponent extends StaticComponent {
     }
 
     public void setMesh(Mesh mesh) {
-        if(this.mesh != null) {
+        if(this.mesh != null && this.mesh.isReady()) {
             try {
                 this.mesh.close();
             } catch (Exception e) {

@@ -4,6 +4,7 @@ import com.geode.core.reflections.Extensions;
 import com.geode.core.reflections.PackageClassLoaderManager;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
 import org.apache.logging.log4j.LogManager;
@@ -46,6 +47,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         resourceLocator.setLocation(Shader.class, "shaders");
         resourceLocator.setLocation(Texture.class, "textures");
         resourceLocator.setLocation(Settings.class, "settings");
+        resourceLocator.setLocation(Model.class, "models");
         windowManager.init();
         resourceManagers.init();
         resourceManagers.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);

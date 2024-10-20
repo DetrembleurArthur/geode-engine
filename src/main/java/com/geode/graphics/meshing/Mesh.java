@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL30;
 import java.util.List;
 
 public class Mesh implements Initializable, Closeable {
-
+    
     private int vao = 0;
     private int vbo = 0;
     private int ebo = 0;

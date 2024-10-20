@@ -4,7 +4,6 @@ import com.geode.core.reflections.Extensions;
 import com.geode.core.reflections.Singleton;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Shader;
-import com.geode.graphics.Texture;
 
 @Singleton
 public class ShaderManager extends ResourceManager<Shader> {

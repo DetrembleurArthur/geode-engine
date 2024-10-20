@@ -18,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-@SceneEntry(value = "my_2d_scene", first = true)
+@SceneEntry(value = "my_2d_scene", first = false)
 public class My2DScene extends Scene {
 
     public @Inject Application app;
@@ -104,6 +104,7 @@ public class My2DScene extends Scene {
 
     @Override
     public void close() throws Exception {
-        gameObject.close();
+        if(gameObject != null)
+            gameObject.close();
     }
 }

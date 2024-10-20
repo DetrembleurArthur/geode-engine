@@ -2,6 +2,7 @@ package com.geode.core;
 
 import com.geode.core.reflections.Singleton;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
 
@@ -51,6 +52,7 @@ public class ResourceManagers implements Initializable, Closeable {
     public void init() throws GeodeException {
         register(Shader.class, new ShaderManager());
         register(Texture.class, new TextureManager());
+        register(Model.class, new ModelManager());
         register(Settings.class, new SettingsManager());
     }
 }

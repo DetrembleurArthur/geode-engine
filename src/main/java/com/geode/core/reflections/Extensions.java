@@ -10,6 +10,7 @@ public enum Extensions {
         SOU_MP4("mp4"),
         SOU_OGG("ogg"),
         SOU_WAV("wav"),
+        MODEL_OBJ("obj"),
         SETTINGS("properties");
 
     private final String extension;
@@ -22,5 +23,9 @@ public enum Extensions {
     @Override
     public String toString() {
         return extension;
+    }
+
+    public String asExtension() {
+        return "." + extension;
     }
 }
