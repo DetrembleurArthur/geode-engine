@@ -3,6 +3,7 @@ package com.geode.graphics;
 import com.geode.core.Resource;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.meshing.MeshAttribute;
+import com.geode.graphics.meshing.MeshAttributeType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -35,8 +36,8 @@ public class Shader implements Resource {
         if (dotIndex != -1) {
             vertexShaderPath = normalizeResourceManagerFilename.substring(0, dotIndex) + "_vertex" + normalizeResourceManagerFilename.substring(dotIndex);
             fragmentShaderPath = normalizeResourceManagerFilename.substring(0, dotIndex) + "_fragment" + normalizeResourceManagerFilename.substring(dotIndex);
-        }
-        else throw new GeodeException(normalizeResourceManagerFilename + " must be a noramlized resource manager path");
+        } else
+            throw new GeodeException(normalizeResourceManagerFilename + " must be a noramlized resource manager path");
     }
 
     public Shader(String vertexShaderPath, String fragmentShaderPath) {
@@ -60,6 +61,16 @@ public class Shader implements Resource {
                         Integer.parseInt(String.valueOf(vectorType.charAt(vectorType.length() - 1))),
                         vectorType.charAt(0) == 'v' ? GL11.GL_FLOAT : GL11.GL_INT,
                         vectorType.charAt(0) == 'v' ? Float.BYTES : Integer.BYTES);
+                variableName = variableName.toLowerCase();
+                if (variableName.startsWith("apos")) {
+                    attribute.setAttributeType(MeshAttributeType.POSITION);
+                } else if (variableName.startsWith("atex")) {
+                    attribute.setAttributeType(MeshAttributeType.UV);
+                } else if (variableName.startsWith("acolor")) {
+                    attribute.setAttributeType(MeshAttributeType.COLOR);
+                } else {
+                    attribute.setAttributeType(MeshAttributeType.UNDEFINED);
+                }
                 meshAttributes.add(attribute);
             } catch (Exception e) {
 
@@ -69,18 +80,18 @@ public class Shader implements Resource {
 
     private String[] loadSources() throws IOException {
         String[] sources = new String[2];
-        try(BufferedReader br = new BufferedReader(new FileReader(vertexShaderPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(vertexShaderPath))) {
             sources[0] = "";
             String buffer;
-            while((buffer = br.readLine()) != null) {
+            while ((buffer = br.readLine()) != null) {
                 sources[0] += buffer + "\n";
                 parseLayoutString(buffer);
             }
         }
-        try(BufferedReader br = new BufferedReader(new FileReader(fragmentShaderPath))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fragmentShaderPath))) {
             sources[1] = "";
             String buffer;
-            while((buffer = br.readLine()) != null) {
+            while ((buffer = br.readLine()) != null) {
                 sources[1] += buffer + "\n";
             }
         }
@@ -101,13 +112,13 @@ public class Shader implements Resource {
             GL20.glCompileShader(fragmentShader);
             int[] status = new int[1];
             GL20.glGetShaderiv(vertexShader, GL20.GL_COMPILE_STATUS, status);
-            if(status[0] == GL20.GL_FALSE) {
+            if (status[0] == GL20.GL_FALSE) {
                 String log = GL20.glGetShaderInfoLog(vertexShader);
                 logger.error("cannot compile vertex shader: {}", log);
                 throw new GeodeException(log);
             }
             GL20.glGetShaderiv(fragmentShader, GL20.GL_COMPILE_STATUS, status);
-            if(status[0] == GL20.GL_FALSE) {
+            if (status[0] == GL20.GL_FALSE) {
                 String log = GL20.glGetShaderInfoLog(fragmentShader);
                 GL20.glDeleteShader(vertexShader);
                 vertexShader = 0;
@@ -120,7 +131,7 @@ public class Shader implements Resource {
             GL20.glAttachShader(program, fragmentShader);
             GL20.glLinkProgram(program);
             GL20.glGetProgramiv(program, GL20.GL_LINK_STATUS, status);
-            if(status[0] == GL20.GL_FALSE) {
+            if (status[0] == GL20.GL_FALSE) {
                 String log = GL20.glGetProgramInfoLog(program);
                 logger.error("cannot create program: {}", log);
                 GL20.glDeleteShader(vertexShader);
@@ -163,15 +174,15 @@ public class Shader implements Resource {
 
     @Override
     public void close() throws Exception {
-        if(vertexShader != 0) {
+        if (vertexShader != 0) {
             GL20.glDeleteShader(vertexShader);
             vertexShader = 0;
         }
-        if(fragmentShader != 0) {
+        if (fragmentShader != 0) {
             GL20.glDeleteShader(fragmentShader);
             fragmentShader = 0;
         }
-        if(program != 0) {
+        if (program != 0) {
             GL20.glDeleteProgram(program);
             program = 0;
         }

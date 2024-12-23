@@ -7,6 +7,7 @@ import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
+import com.geode.graphics.sprite.SpriteSheet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -48,6 +49,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         resourceLocator.setLocation(Texture.class, "textures");
         resourceLocator.setLocation(Settings.class, "settings");
         resourceLocator.setLocation(Model.class, "models");
+        resourceLocator.setLocation(SpriteSheet.class, "spritesheets");
         windowManager.init();
         resourceManagers.init();
         resourceManagers.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);

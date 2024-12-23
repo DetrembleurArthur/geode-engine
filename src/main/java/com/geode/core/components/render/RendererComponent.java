@@ -66,10 +66,11 @@ public class RendererComponent extends StaticComponent {
     public void render() {
         if (renderer != null && mesh != null && mesh.isReady()) {
             renderer.start();
+            SpacialGameObject spacial = (SpacialGameObject) child;
             if (texture != null) {
-                renderer.render(((SpacialGameObject) child).getTransform(), mesh, texture);
+                renderer.render(spacial.tr(), mesh, texture, spacial.getColor());
             } else {
-                renderer.render(((SpacialGameObject) child).getTransform(), mesh);
+                renderer.render(spacial.tr(), mesh, spacial.getColor());
             }
             renderer.stop();
         }

@@ -10,8 +10,6 @@ import org.joml.Vector4f;
 public class Renderer<T extends Camera> {
     protected T camera;
     protected Shader shader;
-    protected Vector4f color = new Vector4f(1, 1, 1, 1);
-
 
     public Renderer() {
     }
@@ -21,7 +19,7 @@ public class Renderer<T extends Camera> {
         this.shader = shader;
     }
 
-    public void render(Transform transform, Mesh mesh) {
+    public void render(Transform transform, Mesh mesh, Vector4f color) {
         shader.setUniformMatrix4fv(transform.getModel(), "uModel");
         shader.setUniformMatrix4fv(camera.updateProjection(), "uProjection");
         shader.setUniformMatrix4fv(camera.updateView(), "uView");
@@ -29,7 +27,7 @@ public class Renderer<T extends Camera> {
         mesh.uploadToGPU();
     }
 
-    public void render(Transform transform, Mesh mesh, Texture texture) {
+    public void render(Transform transform, Mesh mesh, Texture texture, Vector4f color) {
         shader.setUniformMatrix4fv(transform.getModel(), "uModel");
         shader.setUniformMatrix4fv(camera.updateProjection(), "uProjection");
         shader.setUniformMatrix4fv(camera.updateView(), "uView");
@@ -67,13 +65,5 @@ public class Renderer<T extends Camera> {
 
     public boolean isReady() {
         return shader != null && shader.isLoaded() && camera != null;
-    }
-
-    public Vector4f getColor() {
-        return color;
-    }
-
-    public void setColor(Vector4f color) {
-        this.color = color;
     }
 }

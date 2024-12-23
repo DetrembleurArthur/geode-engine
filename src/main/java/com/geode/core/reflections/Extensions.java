@@ -11,7 +11,7 @@ public enum Extensions {
         SOU_OGG("ogg"),
         SOU_WAV("wav"),
         MODEL_OBJ("obj"),
-        SETTINGS("properties");
+        JSON("json");
 
     private final String extension;
 

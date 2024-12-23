@@ -1,0 +1,26 @@
+{
+    "width": 80,
+    "height": 80,
+    "rows": 4,
+    "columns": 4,
+    "row_padding": 4,
+    "column_padding": 4,
+    "animations": {
+        "down": {
+            "start": 0,
+            "end": 3
+        },
+        "right": {
+            "start": 4,
+            "end": 7
+        },
+        "left": {
+            "start": 8,
+            "end": 11
+        },
+        "up": {
+            "start": 12,
+            "end": 15
+        }
+    }
+}

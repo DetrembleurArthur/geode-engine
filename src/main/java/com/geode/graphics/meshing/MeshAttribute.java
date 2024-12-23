@@ -8,6 +8,8 @@ public class MeshAttribute {
     private int elements = 0;
     private int type = GL11.GL_FLOAT;
     private int size = Float.BYTES;
+    private MeshAttributeType attributeType = MeshAttributeType.UNDEFINED;
+
 
     public MeshAttribute() {
     }
@@ -42,9 +44,17 @@ public class MeshAttribute {
         this.size = size;
     }
 
+    public MeshAttributeType getAttributeType() {
+        return attributeType;
+    }
+
+    public void setAttributeType(MeshAttributeType attributeType) {
+        this.attributeType = attributeType;
+    }
+
     public static int calculateTotalSize(List<MeshAttribute> attributes) {
         int size = 0;
-        for(MeshAttribute attribute : attributes) {
+        for (MeshAttribute attribute : attributes) {
             size += attribute.getElements() * attribute.getSize();
         }
         return size;

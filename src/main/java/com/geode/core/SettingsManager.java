@@ -7,7 +7,7 @@ public class SettingsManager extends ResourceManager<Settings> {
     private static SettingsManager instance;
 
     SettingsManager() throws GeodeException {
-        super("settings", Settings.class, Extensions.SETTINGS);
+        super("settings", Settings.class, Extensions.JSON);
         if(instance == null)
             instance = this;
         else

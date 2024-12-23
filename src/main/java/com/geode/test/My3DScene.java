@@ -60,7 +60,6 @@ public class My3DScene extends Scene {
             rendererComponent.setTexture(resources.gun.getTextures().get(0));
             rendererComponent.setRenderer(new Renderer<>(localCamera, resources.shader3d));
             rendererComponent.setMesh(resources.gun.getMesh());
-            rendererComponent.getRenderer().setColor(new Vector4f(1, 1, 1, 1));
             camera3D.getProjectionSettings().setZfar(1000000);
             camera3D.enableDepthTest();
 
@@ -77,7 +76,6 @@ public class My3DScene extends Scene {
             rendererComponent.setTexture(resources.cube.getTextures().get(0));
             rendererComponent.setRenderer(new Renderer<>(camera3D, resources.shader3d));
             rendererComponent.setMesh(resources.cube.getMesh());
-            rendererComponent.getRenderer().setColor(new Vector4f(1, 1, 1, 1));
             cube.getTransform().setSize(new Vector3f(1000, 1000, 1000));
 
 

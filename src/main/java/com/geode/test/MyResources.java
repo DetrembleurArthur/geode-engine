@@ -7,6 +7,7 @@ import com.geode.core.reflections.ResourceHolder;
 import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
+import com.geode.graphics.sprite.SpriteSheet;
 
 @ResourceHolder("default")
 public class MyResources {
@@ -20,15 +21,18 @@ public class MyResources {
     @Artifact(value = "3d", ext = Extensions.SHA_GLSL)
     public Shader shader3d;
 
-    @Artifact(value = "yagami", ext = Extensions.TEX_JPG)
+    @Artifact(value = "blob", ext = Extensions.TEX_PNG)
     public Texture texture;
-
-    @Artifact(value = "game", ext = Extensions.SETTINGS)
-    public Settings gameSettings;
 
     @Artifact(value = "gun")
     public Model gun;
 
     @Artifact(value = "cube")
     public Model cube;
+
+    @Artifact(value = "blob")
+    public SpriteSheet blob_sheet;
+
+    @Artifact(value = "game", ext = Extensions.JSON)
+    public Settings gameSettings;
 }

@@ -5,6 +5,7 @@ import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
+import com.geode.graphics.sprite.SpriteSheet;
 
 import java.util.HashMap;
 
@@ -54,5 +55,6 @@ public class ResourceManagers implements Initializable, Closeable {
         register(Texture.class, new TextureManager());
         register(Model.class, new ModelManager());
         register(Settings.class, new SettingsManager());
+        register(SpriteSheet.class, new SpriteSheetManager());
     }
 }
