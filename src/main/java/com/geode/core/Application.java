@@ -80,6 +80,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         double delta = Time.auto_update_delta();
         window.clear();
         currentScene.update(delta);
+        currentScene.innerUpdate();
         try {
             currentScene.draw(delta);
         } catch (GeodeException e) {

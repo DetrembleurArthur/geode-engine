@@ -14,7 +14,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-@SceneEntry(value = "my_3d_scene", first = true)
+@SceneEntry(value = "my_3d_scene", first = false)
 public class My3DScene extends Scene {
 
     public @Inject Application app;

@@ -26,7 +26,7 @@ public class RendererComponent extends StaticComponent {
 
     @Override
     public void close() throws Exception {
-        if(mesh != null && this.mesh.isReady()) {
+        if (mesh != null && this.mesh.isReady()) {
             mesh.close();
         }
     }
@@ -44,7 +44,7 @@ public class RendererComponent extends StaticComponent {
     }
 
     public void setMesh(Mesh mesh) {
-        if(this.mesh != null && this.mesh.isReady()) {
+        if (this.mesh != null && this.mesh.isReady()) {
             try {
                 this.mesh.close();
             } catch (Exception e) {
@@ -64,12 +64,12 @@ public class RendererComponent extends StaticComponent {
     }
 
     public void render() {
-        if(renderer != null && mesh != null && mesh.isReady()) {
+        if (renderer != null && mesh != null && mesh.isReady()) {
             renderer.start();
-            if(texture != null) {
-                renderer.render(((SpacialGameObject)child).getTransform(), mesh, texture);
+            if (texture != null) {
+                renderer.render(((SpacialGameObject) child).getTransform(), mesh, texture);
             } else {
-                renderer.render(((SpacialGameObject)child).getTransform(), mesh);
+                renderer.render(((SpacialGameObject) child).getTransform(), mesh);
             }
             renderer.stop();
         }

@@ -13,7 +13,7 @@ public class Transform {
     private Vector3f origin = new Vector3f();
 
     public Matrix4f getModel() {
-        if(dirty) {
+        if (dirty) {
             model = model.identity()
                     .translate(position)
                     .rotate(Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
@@ -27,9 +27,9 @@ public class Transform {
     }
 
     public void setSize(Vector3f size) {
-        if(size.x <= 0) size.x = 1;
-        if(size.y <= 0) size.y = 1;
-        if(size.z <= 0) size.z = 1;
+        if (size.x <= 0) size.x = 1;
+        if (size.y <= 0) size.y = 1;
+        if (size.z <= 0) size.z = 1;
         origin.mul(size.x / this.size.x, size.y / this.size.y, size.z / this.size.z);
         this.size = new Vector3f(size);
         dirty = true;
@@ -214,5 +214,30 @@ public class Transform {
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
+    }
+
+    public Transform translate(Vector3f translation) {
+        setPosition(position.add(translation));
+        return this;
+    }
+
+    public Transform translateX(float x) {
+        setX(position.x + x);
+        return this;
+    }
+
+    public Transform translateY(float y) {
+        setX(position.y + y);
+        return this;
+    }
+
+    public Transform translateZ(float z) {
+        setX(position.z + z);
+        return this;
+    }
+
+    public Transform rotate(float degree) {
+        setRotation2D(rotation.z + degree);
+        return this;
     }
 }

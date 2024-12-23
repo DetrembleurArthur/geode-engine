@@ -1,6 +1,7 @@
 package com.geode.test;
 
 import com.geode.core.*;
+import com.geode.core.components.LambdaComponent;
 import com.geode.core.components.render.RendererComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
@@ -18,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-@SceneEntry(value = "my_2d_scene", first = false)
+@SceneEntry(value = "my_2d_scene", first = true)
 public class My2DScene extends Scene {
 
     public @Inject Application app;
@@ -35,14 +36,15 @@ public class My2DScene extends Scene {
 
     private SpacialGameObject gameObject;
 
+    private Renderer<Camera2D> defaultRenderer;
+
     @Override
     public void init() {
         try {
             resources.classic.load();
             resources.tex.load();
             resources.texture.load();
-            resources.gameSettings.load();
-            System.err.println(resources.gameSettings.<Game>pojo().toString());
+            defaultRenderer = new Renderer<>(defaultCamera, resources.tex);
 
         } catch (GeodeException e) {
             throw new RuntimeException(e);
@@ -55,35 +57,22 @@ public class My2DScene extends Scene {
         windowManager.getWindow().setClearColor(new Vector4f(0f, 0, 0, 1));
         singleton.sayHello();
 
-
-
-
         gameObject = new SpacialGameObject();
-        gameObject.init();
-        RendererComponent rendererComponent = gameObject.getComponent(RendererComponent.class);
-        rendererComponent.setTexture(resources.texture);
-        rendererComponent.setRenderer(new Renderer<>(new Camera2D(windowManager), resources.tex));
-        rendererComponent.getMesh().fill(resources.tex.getMeshAttributes(), new float[]{
-                // Face arrière (Rouge)
-                0, 0, 0,   1, 1, 1, 1,     0, 0,  // Sommet 0 : arrière-bas-gauche, rouge
-                0, 1, 0,   1, 1, 1, 1,     0, 1,// Sommet 1 : arrière-haut-gauche, rouge
-                1, 1, 0,   1, 1, 1, 1,     1, 1,  // Sommet 2 : arrière-haut-droit, rouge
-                1, 0, 0,   1, 1, 1, 1,     1, 0// Sommet 3 : arrière-bas-droit, rouge
-        }, new int[]{
-                0, 1, 2,
-                0, 2, 3,
-        });
+
+        gameObject.assignDefaultRenderer(defaultRenderer, resources.texture);
 
         Transform transform = gameObject.getTransform();
-
-
 
 
         transform.setPosition(new Vector3f(100, 100, 0));
         transform.setSize(new Vector3f(300, 300, 0));
         transform.setCenterOrigin();
 
-        ((Camera2D)rendererComponent.getRenderer().getCamera()).focus(new Vector2f(transform.getPosition().x, transform.getPosition().y));
+        gameObject.getComponent(LambdaComponent.class).set(() -> gameObject.tr().rotate((float) (90 * Time.getDelta())));
+
+        goManager.layer().add(gameObject);
+
+        defaultCamera.focus(new Vector2f(transform.getPosition().x, transform.getPosition().y));
 
 
     }
@@ -94,17 +83,7 @@ public class My2DScene extends Scene {
     }
 
     @Override
-    public void draw(double dt) throws GeodeException {
-        RendererComponent rendererComponent = gameObject.getComponent(RendererComponent.class);
-        if(rendererComponent != null) {
-            rendererComponent.render();
-        }
-
-    }
-
-    @Override
     public void close() throws Exception {
-        if(gameObject != null)
-            gameObject.close();
+
     }
 }

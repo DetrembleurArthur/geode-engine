@@ -44,6 +44,7 @@ public class SceneManager implements Initializable, Closeable {
                         if(!scenes.containsKey(sceneEntry.value())) {
                             Scene scene = (Scene) cl.getConstructor().newInstance();
                             injectFields(scene);
+                            scene.innerInit();
                             scene.init();
                             scenes.put(sceneEntry.value(), scene);
                             if(sceneEntry.first() && currentScene == null) {
@@ -55,7 +56,7 @@ public class SceneManager implements Initializable, Closeable {
                             logger.warn("Scene {} already exists => ignore", sceneEntry.value());
                         }
                     } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                             NoSuchMethodException e) {
+                             NoSuchMethodException | GeodeException e) {
                         throw new RuntimeException(e);
                     }
                 });
@@ -114,17 +115,19 @@ public class SceneManager implements Initializable, Closeable {
             try {
                 logger.info("close Scene {}", s);
                 scene.close();
+                scene.innerClose();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-    public void setCurrent(String id) throws GeodeException {
+    public void setCurrent(String id) throws Exception {
         Scene scene = scenes.get(id);
         if(scene != null) {
             if(scene != currentScene) {
                 currentScene.unselect();
+                scene.innerClose();
                 currentScene = scene;
                 currentScene.select();
                 logger.info("Scene {} set as current", id);
