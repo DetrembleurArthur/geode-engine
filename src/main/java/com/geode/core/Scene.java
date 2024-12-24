@@ -1,19 +1,23 @@
 package com.geode.core;
 
-import com.geode.entity.GameObject;
-import com.geode.entity.GameObjectLayer;
 import com.geode.entity.GameObjectManager;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Shader;
 import com.geode.graphics.camera.Camera2D;
+import com.geode.graphics.renderer.Renderer;
 
 public abstract class Scene implements Initializable, Closeable, Taggable {
 
     protected final GameObjectManager goManager = new GameObjectManager();
-    protected Camera2D defaultCamera;
+    protected Camera2D default2DCamera;
+    protected Shader default2DShader;
+    protected Renderer<Camera2D> default2DRenderer;
 
     public final void innerInit() throws GeodeException {
-        defaultCamera = new Camera2D(WindowManager.getInstance());
+        default2DCamera = new Camera2D(WindowManager.getInstance());
         goManager.init();
+        default2DShader = ShaderManager.getInstance().getResource("default.tex");
+        default2DRenderer = new Renderer<>(default2DCamera, default2DShader);
     }
 
     public final void innerClose() throws Exception {
@@ -44,6 +48,7 @@ public abstract class Scene implements Initializable, Closeable, Taggable {
     }
 
     public abstract void update(double dt);
+
     public void innerUpdate() {
         goManager.update();
     }
@@ -55,5 +60,21 @@ public abstract class Scene implements Initializable, Closeable, Taggable {
     @Override
     public Object tag() {
         return this;
+    }
+
+    public Camera2D getDefault2DCamera() {
+        return default2DCamera;
+    }
+
+    public Shader getDefault2DShader() {
+        return default2DShader;
+    }
+
+    public Renderer<Camera2D> getDefault2DRenderer() {
+        return default2DRenderer;
+    }
+
+    public GameObjectManager getGoManager() {
+        return goManager;
     }
 }

@@ -1,27 +1,20 @@
 package com.geode.test;
 
 import com.geode.core.*;
-import com.geode.core.components.LambdaComponent;
 import com.geode.core.components.render.RendererComponent;
 import com.geode.core.mouse.ButtonState;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
 import com.geode.entity.Transform;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.camera.Camera2D;
-import com.geode.graphics.meshing.MeshAttribute;
 import com.geode.graphics.renderer.Renderer;
 import com.geode.graphics.sprite.Sprite;
-import com.geode.graphics.sprite.SpriteSheet;
 import org.joml.Vector2f;
-import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SceneEntry(value = "my_2d_scene", first = true)
 public class My2DScene extends Scene {
@@ -40,18 +33,16 @@ public class My2DScene extends Scene {
 
     private SpacialGameObject gameObject;
 
-    private Renderer<Camera2D> defaultRenderer;
-
 
     private boolean pressed = false;
+
+    private Timer timer;
 
     @Override
     public void init() {
         try {
             resources.classic.load();
-            resources.tex.load();
             resources.texture.load();
-            defaultRenderer = new Renderer<>(defaultCamera, resources.tex);
             resources.blob_sheet.init();
             resources.gameSettings.init();
 
@@ -63,14 +54,13 @@ public class My2DScene extends Scene {
     @Override
     public void select() throws GeodeException {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
-        windowManager.getWindow().setClearColor(new Vector4f(0f, 0, 0, 1));
+        windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
         singleton.sayHello();
 
         gameObject = new SpacialGameObject();
         gameObject.getColor().x = 0;
         gameObject.getColor().z = 0;
-
-        gameObject.assignDefaultRenderer(defaultRenderer, resources.texture);
+        gameObject.assignDefaultRenderer(getDefault2DRenderer(), resources.texture);
 
         Transform transform = gameObject.getTransform();
 
@@ -83,8 +73,9 @@ public class My2DScene extends Scene {
 
         goManager.layer().add(gameObject);
 
-        defaultCamera.focus(new Vector2f(transform.getPosition().x, transform.getPosition().y));
+        default2DCamera.focus(new Vector2f(transform.getPosition().x, transform.getPosition().y));
 
+        timer = new Timer(3);
 
     }
 
@@ -99,7 +90,7 @@ public class My2DScene extends Scene {
             } catch (GeodeException e) {
                 throw new RuntimeException(e);
             }
-        } else if(mouseManager.isLeftButton(ButtonState.RELEASED)) {
+        } else if (mouseManager.isLeftButton(ButtonState.RELEASED)) {
             pressed = false;
         }
     }

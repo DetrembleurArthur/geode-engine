@@ -1,4 +1,4 @@
-package com.geode.core;
+package com.geode.core.time;
 
 import org.lwjgl.glfw.GLFW;
 
@@ -10,7 +10,7 @@ public class Time {
         lastTimestamp = get_sec();
     }
 
-    static double auto_update_delta() {
+    public static double auto_update_delta() {
         double t1 = get_sec();
         delta = t1 - lastTimestamp;
         lastTimestamp = t1;

@@ -3,6 +3,7 @@ package com.geode.core;
 import com.geode.core.reflections.Extensions;
 import com.geode.core.reflections.PackageClassLoaderManager;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.time.Time;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
@@ -52,7 +53,12 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         resourceLocator.setLocation(SpriteSheet.class, "spritesheets");
         windowManager.init();
         resourceManagers.init();
-        resourceManagers.get(Shader.class).addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator);
+        resourceManagers.get(Shader.class)
+                .addResource("classic", "default", Extensions.SHA_GLSL, resourceLocator)
+                .load();
+        resourceManagers.get(Shader.class)
+                .addResource("tex", "default", Extensions.SHA_GLSL, resourceLocator)
+                .load();
         sceneManager.init();
         logger.info("initialized !");
     }

@@ -2,8 +2,6 @@ package com.geode.core;
 
 import com.geode.core.reflections.Extensions;
 import com.geode.exceptions.GeodeException;
-import com.geode.graphics.Image;
-import com.geode.graphics.Texture;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
