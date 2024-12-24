@@ -36,9 +36,17 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
         try {
             T resource = clazz.getConstructor(String.class).newInstance(location);
             return addResource(fullName, resource);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException
+                 e) {
             throw new GeodeException(e);
+        } catch (NoSuchMethodException e) {
+            try {
+                T resource = clazz.getConstructor().newInstance();
+                return addResource(fullName, resource);
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                     NoSuchMethodException ex) {
+                throw new GeodeException(ex);
+            }
         }
     }
 

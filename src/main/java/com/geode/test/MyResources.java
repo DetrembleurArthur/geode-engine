@@ -8,6 +8,7 @@ import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
 import com.geode.graphics.sprite.SpriteSheet;
+import com.geode.graphics.ui.text.Font;
 
 @ResourceHolder("default")
 public class MyResources {
@@ -35,4 +36,7 @@ public class MyResources {
 
     @Artifact(value = "game", ext = Extensions.JSON)
     public Settings gameSettings;
+
+    @Artifact(value = "vintage", ext = Extensions.FONT_TTF)
+    public Font vintage_font;
 }

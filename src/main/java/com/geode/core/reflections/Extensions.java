@@ -11,6 +11,8 @@ public enum Extensions {
         SOU_OGG("ogg"),
         SOU_WAV("wav"),
         MODEL_OBJ("obj"),
+        FONT_TTF("ttf"),
+        FONT_OTF("otf"),
         JSON("json");
 
     private final String extension;

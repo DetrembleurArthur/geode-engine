@@ -1,24 +1,18 @@
 package com.geode.test;
 
 import com.geode.core.*;
-import com.geode.core.components.render.RendererComponent;
-import com.geode.core.mouse.ButtonState;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
 import com.geode.entity.Transform;
 import com.geode.exceptions.GeodeException;
-import com.geode.graphics.camera.Camera2D;
-import com.geode.graphics.renderer.Renderer;
-import com.geode.graphics.sprite.Sprite;
 import com.geode.graphics.ui.text.Font;
 import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.util.freetype.FreeType;
 
 @SceneEntry(value = "my_2d_scene", first = true)
 public class My2DScene extends Scene {
@@ -42,8 +36,6 @@ public class My2DScene extends Scene {
 
     private Timer timer;
 
-    private Font font;
-
     @Override
     public void init() {
         try {
@@ -51,6 +43,9 @@ public class My2DScene extends Scene {
             resources.texture.load();
             resources.blob_sheet.init();
             resources.gameSettings.init();
+
+            resources.vintage_font.configure(80, FontCharsets.NUMERIC);
+            resources.vintage_font.load();
 
         } catch (GeodeException e) {
             throw new RuntimeException(e);
@@ -63,12 +58,8 @@ public class My2DScene extends Scene {
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
         PointerBuffer pt = PointerBuffer.allocateDirect(1);
 
-        Font.init();
-        font = new Font("src/main/resources/fonts/default/font_vintage.ttf", 80, FontCharsets.UPPER_ALPHA);
-
-
         gameObject = new SpacialGameObject();
-        gameObject.assignDefaultRenderer(getDefaultFontRenderer(), font.getTexture());
+        gameObject.assignDefaultRenderer(getDefaultFontRenderer(), resources.vintage_font.getTexture());
 
         Transform transform = gameObject.getTransform();
 

@@ -6,6 +6,7 @@ import com.geode.graphics.Model;
 import com.geode.graphics.Shader;
 import com.geode.graphics.Texture;
 import com.geode.graphics.sprite.SpriteSheet;
+import com.geode.graphics.ui.text.Font;
 
 import java.util.HashMap;
 
@@ -56,5 +57,6 @@ public class ResourceManagers implements Initializable, Closeable {
         register(Model.class, new ModelManager());
         register(Settings.class, new SettingsManager());
         register(SpriteSheet.class, new SpriteSheetManager());
+        register(Font.class, new FontManager());
     }
 }
