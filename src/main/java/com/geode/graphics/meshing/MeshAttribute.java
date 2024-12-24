@@ -44,6 +44,10 @@ public class MeshAttribute {
         this.size = size;
     }
 
+    public int getTotalSize() {
+        return elements * size;
+    }
+
     public MeshAttributeType getAttributeType() {
         return attributeType;
     }

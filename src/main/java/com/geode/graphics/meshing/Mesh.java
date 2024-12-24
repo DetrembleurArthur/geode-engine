@@ -78,6 +78,10 @@ public class Mesh implements Initializable, Closeable {
         vao = vbo = ebo = 0;
     }
 
+    public MeshAttribute getAttribute(MeshAttributeType type) {
+        return attributes.stream().filter(meshAttribute -> meshAttribute.getAttributeType().equals(type)).toList().getFirst();
+    }
+
     public void setRectUVs(Vector2f origin, Vector2f size) {
         int vertexSize = MeshAttribute.calculateTotalSize(attributes);
         int skipSize = 0;

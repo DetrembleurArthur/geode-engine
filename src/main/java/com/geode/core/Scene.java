@@ -4,24 +4,25 @@ import com.geode.entity.GameObjectManager;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Shader;
 import com.geode.graphics.camera.Camera2D;
+import com.geode.graphics.renderer.FontRenderer;
 import com.geode.graphics.renderer.Renderer;
+import com.geode.graphics.renderer.ShapeRenderer;
+import com.geode.graphics.renderer.TextureRenderer;
 
 public abstract class Scene implements Initializable, Closeable, Taggable {
 
     protected final GameObjectManager goManager = new GameObjectManager();
     protected Camera2D default2DCamera;
-    protected Shader default2DShader;
-    protected Renderer<Camera2D> default2DRenderer;
-    protected Shader defaultFontShader;
-    protected Renderer<Camera2D> defaultFontRenderer;
+    protected TextureRenderer textureRenderer;
+    protected ShapeRenderer shapeRenderer;
+    protected FontRenderer fontRenderer;
 
     public final void innerInit() throws GeodeException {
         default2DCamera = new Camera2D(WindowManager.getInstance());
         goManager.init();
-        default2DShader = ShaderManager.getInstance().getResource("default.tex");
-        default2DRenderer = new Renderer<>(default2DCamera, default2DShader);
-        defaultFontShader = ShaderManager.getInstance().getResource("default.font");
-        defaultFontRenderer = new Renderer<>(default2DCamera, defaultFontShader);
+        textureRenderer = new TextureRenderer(default2DCamera);
+        shapeRenderer = new ShapeRenderer(default2DCamera);
+        fontRenderer = new FontRenderer(default2DCamera);
     }
 
     public final void innerClose() throws Exception {
@@ -70,23 +71,19 @@ public abstract class Scene implements Initializable, Closeable, Taggable {
         return default2DCamera;
     }
 
-    public Shader getDefault2DShader() {
-        return default2DShader;
-    }
-
-    public Renderer<Camera2D> getDefault2DRenderer() {
-        return default2DRenderer;
-    }
-
     public GameObjectManager getGoManager() {
         return goManager;
     }
 
-    public Shader getDefaultFontShader() {
-        return defaultFontShader;
+    public TextureRenderer getTextureRenderer() {
+        return textureRenderer;
     }
 
-    public Renderer<Camera2D> getDefaultFontRenderer() {
-        return defaultFontRenderer;
+    public ShapeRenderer getShapeRenderer() {
+        return shapeRenderer;
+    }
+
+    public FontRenderer getFontRenderer() {
+        return fontRenderer;
     }
 }

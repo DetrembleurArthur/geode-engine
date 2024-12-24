@@ -133,8 +133,9 @@ public class Font implements Resource {
 
         ByteBuffer fontBuffer;
         try {
-            fontBuffer = MemoryUtil.memAlloc(Files.readAllBytes(Path.of(filename)).length);
-            fontBuffer.put(Files.readAllBytes(Path.of(filename))).flip();
+            Path path = Path.of(filename);
+            fontBuffer = MemoryUtil.memAlloc(Files.readAllBytes(path).length);
+            fontBuffer.put(Files.readAllBytes(path)).flip();
         } catch (IOException e) {
             System.err.println("Failed to load font file: " + e.getMessage());
             return;

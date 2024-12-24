@@ -17,6 +17,10 @@ public class Camera2D extends Camera {
     private Vector2f position = new Vector2f();
     private float rotation = 0;
 
+    public Camera2D() {
+        this(WindowManager.getInstance());
+    }
+
     public Camera2D(WindowManager windowManager) {
         adaptOnResize(windowManager);
         logger.info("Camera2D setup: " + ortho);
@@ -34,7 +38,7 @@ public class Camera2D extends Camera {
                 new Vector3f(position.x, position.y, 20),
                 new Vector3f(position.x, position.y, -1.0f),
                 new Vector3f(0.0f, 1.0f, 0.0f));
-        Vector3f orthoAdaptation = new Vector3f(position.x + ortho.z / 2.0f, position.y + ortho.w /2.0f, 0);
+        Vector3f orthoAdaptation = new Vector3f(position.x + ortho.z / 2.0f, position.y + ortho.w / 2.0f, 0);
         view = view.translate(orthoAdaptation);
         view = view.scale(zoom);
         view = view.rotate((float) Math.toRadians(rotation), new Vector3f(0f, 0f, 1f));

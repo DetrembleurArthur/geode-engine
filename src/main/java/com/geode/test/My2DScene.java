@@ -6,6 +6,7 @@ import com.geode.core.reflections.SceneEntry;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
 import com.geode.entity.Transform;
+import com.geode.entity.ui.Text;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.ui.text.Font;
 import com.geode.graphics.ui.text.FontCharsets;
@@ -29,7 +30,7 @@ public class My2DScene extends Scene {
 
     public @Inject ControllerManager controllerManager;
 
-    private SpacialGameObject gameObject;
+    private Text text;
 
 
     private boolean pressed = false;
@@ -44,7 +45,7 @@ public class My2DScene extends Scene {
             resources.blob_sheet.init();
             resources.gameSettings.init();
 
-            resources.vintage_font.configure(80, FontCharsets.NUMERIC);
+            resources.vintage_font.configure(150, FontCharsets.ALPHA_NUMERIC);
             resources.vintage_font.load();
 
         } catch (GeodeException e) {
@@ -56,24 +57,20 @@ public class My2DScene extends Scene {
     public void select() throws GeodeException {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-        PointerBuffer pt = PointerBuffer.allocateDirect(1);
 
-        gameObject = new SpacialGameObject();
-        gameObject.assignDefaultRenderer(getDefaultFontRenderer(), resources.vintage_font.getTexture());
-
-        Transform transform = gameObject.getTransform();
+        text = new Text("ARTHUR", resources.vintage_font, getFontRenderer());
 
 
-        transform.setPosition(new Vector3f(100, 100, 0));
-        transform.getSize().x = 700;
-        transform.getSize().y = 50;
-        transform.setCenterOrigin();
+        text.setTextHeight(200);
+        text.tr().setCenterOrigin();
 
         //gameObject.getComponent(LambdaComponent.class).set(() -> gameObject.tr().rotate((float) (90 * Time.getDelta())));
 
-        goManager.layer().add(gameObject);
+        goManager.layer().add(text);
 
-        default2DCamera.focus(new Vector2f(transform.getPosition().x, transform.getPosition().y));
+
+
+        default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
 
         timer = new Timer(3);
 
