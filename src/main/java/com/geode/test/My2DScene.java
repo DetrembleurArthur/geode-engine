@@ -12,9 +12,13 @@ import com.geode.exceptions.GeodeException;
 import com.geode.graphics.camera.Camera2D;
 import com.geode.graphics.renderer.Renderer;
 import com.geode.graphics.sprite.Sprite;
+import com.geode.graphics.ui.text.Font;
+import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.util.freetype.FreeType;
 
 @SceneEntry(value = "my_2d_scene", first = true)
 public class My2DScene extends Scene {
@@ -38,6 +42,8 @@ public class My2DScene extends Scene {
 
     private Timer timer;
 
+    private Font font;
+
     @Override
     public void init() {
         try {
@@ -55,18 +61,21 @@ public class My2DScene extends Scene {
     public void select() throws GeodeException {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-        singleton.sayHello();
+        PointerBuffer pt = PointerBuffer.allocateDirect(1);
+
+        Font.init();
+        font = new Font("src/main/resources/fonts/default/font_vintage.ttf", 80, FontCharsets.UPPER_ALPHA);
+
 
         gameObject = new SpacialGameObject();
-        gameObject.getColor().x = 0;
-        gameObject.getColor().z = 0;
-        gameObject.assignDefaultRenderer(getDefault2DRenderer(), resources.texture);
+        gameObject.assignDefaultRenderer(getDefaultFontRenderer(), font.getTexture());
 
         Transform transform = gameObject.getTransform();
 
 
         transform.setPosition(new Vector3f(100, 100, 0));
-        transform.setSize(new Vector3f(300, 300, 0));
+        transform.getSize().x = 700;
+        transform.getSize().y = 50;
         transform.setCenterOrigin();
 
         //gameObject.getComponent(LambdaComponent.class).set(() -> gameObject.tr().rotate((float) (90 * Time.getDelta())));
@@ -81,6 +90,7 @@ public class My2DScene extends Scene {
 
     @Override
     public void update(double dt) {
+        /*
         if (!pressed && mouseManager.isLeftButton(ButtonState.PRESSED)) {
             pressed = true;
             try {
@@ -92,7 +102,7 @@ public class My2DScene extends Scene {
             }
         } else if (mouseManager.isLeftButton(ButtonState.RELEASED)) {
             pressed = false;
-        }
+        }*/
     }
 
     @Override

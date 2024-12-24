@@ -18,10 +18,17 @@ public class Texture implements Resource {
     private final Vector2i size;
     private final ByteBuffer buffer;
     private Image image;
+    private int format = GL_RGBA;
 
     public Texture(Vector2i size, ByteBuffer buffer) throws GeodeException {
         this.size = size;
         this.buffer = buffer;
+    }
+
+    public Texture(Vector2i size, ByteBuffer buffer, int format) {
+        this.size = size;
+        this.buffer = buffer;
+        this.format = format;
     }
 
     public Texture(Image image) throws GeodeException {
@@ -43,7 +50,7 @@ public class Texture implements Resource {
     public void init() throws GeodeException {
         id = GL11.glGenTextures();
         bind();
-        GL11.glTexImage2D(GL_TEXTURE_2D, 0, GL11.GL_RGBA, size.x, size.y, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
+        GL11.glTexImage2D(GL_TEXTURE_2D, 0,format, size.x, size.y, 0, format, GL11.GL_UNSIGNED_BYTE, buffer);
         initParameters();
         unbind();
     }
@@ -60,8 +67,14 @@ public class Texture implements Resource {
 
     private void initParameters()
     {
-        enableRepeat();
-        enableNearest();
+        if(format == GL_RGBA) {
+            enableRepeat();
+            enableNearest();
+        }
+        else if(format == GL_RED) {
+            enableNearest();
+            enableClampToEdge();
+        }
     }
 
     private void enableWrapParameter(int param)

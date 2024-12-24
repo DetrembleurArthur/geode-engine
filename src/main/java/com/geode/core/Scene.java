@@ -12,12 +12,16 @@ public abstract class Scene implements Initializable, Closeable, Taggable {
     protected Camera2D default2DCamera;
     protected Shader default2DShader;
     protected Renderer<Camera2D> default2DRenderer;
+    protected Shader defaultFontShader;
+    protected Renderer<Camera2D> defaultFontRenderer;
 
     public final void innerInit() throws GeodeException {
         default2DCamera = new Camera2D(WindowManager.getInstance());
         goManager.init();
         default2DShader = ShaderManager.getInstance().getResource("default.tex");
         default2DRenderer = new Renderer<>(default2DCamera, default2DShader);
+        defaultFontShader = ShaderManager.getInstance().getResource("default.font");
+        defaultFontRenderer = new Renderer<>(default2DCamera, defaultFontShader);
     }
 
     public final void innerClose() throws Exception {
@@ -76,5 +80,13 @@ public abstract class Scene implements Initializable, Closeable, Taggable {
 
     public GameObjectManager getGoManager() {
         return goManager;
+    }
+
+    public Shader getDefaultFontShader() {
+        return defaultFontShader;
+    }
+
+    public Renderer<Camera2D> getDefaultFontRenderer() {
+        return defaultFontRenderer;
     }
 }
