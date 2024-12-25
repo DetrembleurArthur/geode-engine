@@ -1,8 +1,7 @@
 package com.geode.entity;
 
+import org.joml.*;
 import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public class Transform {
     private Matrix4f model = new Matrix4f();
@@ -35,6 +34,14 @@ public class Transform {
         dirty = true;
     }
 
+    public void setSize(Vector2i size) {
+        if (size.x <= 0) size.x = 1;
+        if (size.y <= 0) size.y = 1;
+        origin.mul(size.x / this.size.x, size.y / this.size.y, 1);
+        this.size = new Vector3f(size.x, size.y, this.size.z);
+        dirty = true;
+    }
+
     public void setWidth(float width) {
         setSize(new Vector3f(width, size.y, size.z));
     }
@@ -49,6 +56,16 @@ public class Transform {
 
     public void setPosition(Vector3f position) {
         this.position = new Vector3f(position);
+        dirty = true;
+    }
+
+    public void setPosition(Vector2i position) {
+        this.position = new Vector3f(position.x, position.y, 0);
+        dirty = true;
+    }
+
+    public void setPosition(Vector2f position) {
+        this.position = new Vector3f(position.x, position.y, 0);
         dirty = true;
     }
 

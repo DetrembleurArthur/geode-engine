@@ -39,4 +39,10 @@ public class MyResources {
 
     @Artifact(value = "vintage", ext = Extensions.FONT_TTF)
     public Font vintage_font;
+
+    @Artifact(value = "terraria", ext = Extensions.FONT_TTF)
+    public Font terraria_font;
+
+    @Artifact(value = "geode", ext = Extensions.TEX_PNG)
+    public Texture geode;
 }

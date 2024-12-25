@@ -1,6 +1,7 @@
 package com.geode.test;
 
 import com.geode.core.*;
+import com.geode.core.components.render.RendererComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.core.time.Timer;
@@ -44,9 +45,10 @@ public class My2DScene extends Scene {
             resources.texture.load();
             resources.blob_sheet.init();
             resources.gameSettings.init();
+            resources.geode.load();
 
-            resources.vintage_font.configure(150, FontCharsets.ALPHA_NUMERIC);
-            resources.vintage_font.load();
+            resources.terraria_font.configure(50, FontCharsets.ascii());
+            resources.terraria_font.load();
 
         } catch (GeodeException e) {
             throw new RuntimeException(e);
@@ -58,19 +60,25 @@ public class My2DScene extends Scene {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
-        text = new Text("ARTHUR", resources.vintage_font, getFontRenderer());
+        text = new Text("Arthur le best", resources.terraria_font, getFontRenderer());
 
 
-        text.setTextHeight(200);
-        text.tr().setCenterOrigin();
+        text.setTextHeight(30);
+        text.tr().setPosition(new Vector3f(20, 20, 0));
 
         //gameObject.getComponent(LambdaComponent.class).set(() -> gameObject.tr().rotate((float) (90 * Time.getDelta())));
 
         goManager.layer().add(text);
 
+        SpacialGameObject gameObject = new SpacialGameObject();
+        gameObject.assignDefaultRenderer(getTextureRenderer(), resources.geode);
+        gameObject.tr().setSize(resources.geode.getSize().mul(3));
+        gameObject.tr().setCenterOrigin();
+        gameObject.tr().setPosition(windowManager.getWindow().getSize().div(2));
+        goManager.layer().add(gameObject);
 
 
-        default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
+        //default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
 
         timer = new Timer(3);
 

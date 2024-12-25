@@ -42,8 +42,8 @@ public class Text extends SpacialGameObject {
             int[] indices = new int[value.length() * indicesByGlyph];
             final Vector2i texSize = renderer.getTexture().getSize();
             Vector2i offset = new Vector2i();
-            float min_xpos = -1;
-            float max_xpos = 0;
+            float min_xpos = Float.MAX_VALUE;
+            float max_xpos = Float.MIN_VALUE;
             float min_ypos = Float.MAX_VALUE;
             float max_ypos = Float.MIN_VALUE;
             float width = Float.MIN_VALUE;

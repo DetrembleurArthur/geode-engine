@@ -61,14 +61,18 @@ public class Font implements Resource {
         MemoryUtil.memSet(textureBuffer, (byte) 0);
 
         int xOffset = 0;
-        for (Glyph glyph : glyphs.values()) {
+        for (char c : charset.toCharArray()) {
+            Glyph glyph = glyphs.get(c);
             ByteBuffer bitmap = glyph.getBitmap();
-            for (int y = 0; y < glyph.height; y++) {
-                for (int x = 0; x < glyph.width; x++) {
-                    int index = xOffset + x + (y * width);
-                    textureBuffer.put(index, bitmap.get(x + y * glyph.width));
+            if(bitmap != null) {
+                for (int y = 0; y < glyph.height; y++) {
+                    for (int x = 0; x < glyph.width; x++) {
+                        int index = xOffset + x + (y * width);
+                        textureBuffer.put(index, bitmap.get(x + y * glyph.width));
+                    }
                 }
             }
+
             xOffset += glyph.width + 10;
         }
 
@@ -113,22 +117,18 @@ public class Font implements Resource {
             FreeType.FT_Done_Face(face);
             face = null;
         }
+        if(!glyphs.isEmpty()) {
+            glyphs.forEach((character, glyph) -> glyph.clear());
+            glyphs.clear();
+        }
     }
 
     @Override
     public void init() throws GeodeException {
-        glyphs.clear();
-        if (texture != null) {
-            try {
-                texture.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            texture = null;
-        }
-        if (face != null) {
-            FreeType.FT_Done_Face(face);
-            face = null;
+        try {
+            close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         ByteBuffer fontBuffer;
@@ -171,10 +171,11 @@ public class Font implements Resource {
             int bitmapLeft = face.glyph().bitmap_left();
             int bitmapTop = face.glyph().bitmap_top();
             int advance = (int) face.glyph().advance().x();
-
-            ByteBuffer buffer = MemoryUtil.memAlloc(width * height);
-            buffer.put(face.glyph().bitmap().buffer(width * height)).flip();
-
+            ByteBuffer buffer = null;
+            if(width * height != 0) {
+                buffer = MemoryUtil.memAlloc(width * height);
+                buffer.put(face.glyph().bitmap().buffer(width * height)).flip();
+            }
             Glyph glyph = new Glyph(width, height, advance, bitmapLeft, bitmapTop, xOffset);
             glyph.setBitmap(buffer);
             glyphs.put(c, glyph);

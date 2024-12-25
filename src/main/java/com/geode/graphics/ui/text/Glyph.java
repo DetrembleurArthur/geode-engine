@@ -51,4 +51,10 @@ public class Glyph {
     public int getTextureOffset() {
         return textureOffset;
     }
+
+    public void clear() {
+        if(bitmap != null) {
+            bitmap.clear();
+        }
+    }
 }
