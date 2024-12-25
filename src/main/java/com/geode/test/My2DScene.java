@@ -1,9 +1,11 @@
 package com.geode.test;
 
 import com.geode.core.*;
+import com.geode.core.components.LambdaComponent;
 import com.geode.core.components.render.RendererComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.time.Time;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
 import com.geode.entity.Transform;
@@ -66,7 +68,7 @@ public class My2DScene extends Scene {
         text.setTextHeight(30);
         text.tr().setPosition(new Vector3f(20, 20, 0));
 
-        //gameObject.getComponent(LambdaComponent.class).set(() -> gameObject.tr().rotate((float) (90 * Time.getDelta())));
+        text.getComponent(LambdaComponent.class).set(() -> text.setValue(Time.getCurrentFps() + " fps"));
 
         goManager.layer().add(text);
 

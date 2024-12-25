@@ -16,6 +16,7 @@ public class Main {
             application.getWindowManager().setHintCallback(() -> {
                 //application.getWindowManager().hintMaximized(true);
             });
+            application.setFps(40);
             application.init();
             application.run();
         }

@@ -27,6 +27,7 @@ public class Application implements Initializable, Runnable, AutoCloseable {
     private final String applicationPackage;
     private final PackageClassLoaderManager packageClassLoaderManager;
     private final SceneManager sceneManager;
+    private int fps = 30;
 
     private Application(String applicationPackage) throws GeodeException {
         this.applicationPackage = applicationPackage;
@@ -96,11 +97,13 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         currentScene.innerUpdate();
         try {
             currentScene.draw(delta);
+
         } catch (GeodeException e) {
             e.printStackTrace();
         }
         window.swap();
         windowManager.manageEvents();
+        Time.waitForTargetFps(getFps());
 
     }
 
@@ -118,5 +121,13 @@ public class Application implements Initializable, Runnable, AutoCloseable {
 
     public WindowManager getWindowManager() {
         return windowManager;
+    }
+
+    public int getFps() {
+        return fps;
+    }
+
+    public void setFps(int fps) {
+        this.fps = fps;
     }
 }
