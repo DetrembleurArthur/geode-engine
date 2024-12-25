@@ -1,9 +1,12 @@
 package com.geode.graphics.ui.text;
 
+import com.geode.core.Application;
 import com.geode.core.FontManager;
 import com.geode.core.Resource;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Texture;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Vector2i;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
@@ -21,11 +24,12 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Font implements Resource {
+    private static final Logger logger = LogManager.getLogger(Font.class);
     private static final long ftLibrary = FontManager.getFtLibrary();
     private FT_Face face;
     private final String filename;
     private int fontSize = 12;
-    private String charset = FontCharsets.ALPHA_NUMERIC;
+    private String charset = FontCharsets.ascii();
     private final Map<Character, Glyph> glyphs = new HashMap<>();
     private Texture texture;
 
@@ -39,15 +43,15 @@ public class Font implements Resource {
         this.charset = charset;
     }
 
-
-
     @Override
     public void configure(Object... parameters) {
         if (parameters.length >= 1) {
             fontSize = (int) parameters[0];
+            logger.info("configure {} fontSize as {}", filename, fontSize);
         }
         if (parameters.length >= 2) {
             charset = (String) parameters[1];
+            logger.info("configure {} charset as {}", filename, charset);
         }
     }
 
@@ -56,41 +60,11 @@ public class Font implements Resource {
         return texture != null;
     }
 
-    private void generateTexture(int width, int height) {
-        ByteBuffer textureBuffer = MemoryUtil.memAlloc(width * height);
-        MemoryUtil.memSet(textureBuffer, (byte) 0);
-
-        int xOffset = 0;
-        for (char c : charset.toCharArray()) {
-            Glyph glyph = glyphs.get(c);
-            ByteBuffer bitmap = glyph.getBitmap();
-            if(bitmap != null) {
-                for (int y = 0; y < glyph.height; y++) {
-                    for (int x = 0; x < glyph.width; x++) {
-                        int index = xOffset + x + (y * width);
-                        textureBuffer.put(index, bitmap.get(x + y * glyph.width));
-                    }
-                }
-            }
-
-            xOffset += glyph.width + 10;
-        }
-
-        try {
-            texture = new Texture(new Vector2i(width, height), textureBuffer, GL_RED);
-            texture.load();
-        } catch (GeodeException e) {
-            throw new RuntimeException(e);
-        }
-        MemoryUtil.memFree(textureBuffer);
-        System.out.println("Font '" + filename + "' loaded.");
-    }
-
     public void setFontSize(int size) {
         this.fontSize = size;
         int error = FreeType.FT_Set_Pixel_Sizes(face, 0, size);
         if (error != 0) {
-            System.err.println("Cannot set font size to " + size + " with error code: " + error);
+            logger.error("Cannot set font size to {} with error code: {}", size, error);
         }
     }
 
@@ -137,7 +111,7 @@ public class Font implements Resource {
             fontBuffer = MemoryUtil.memAlloc(Files.readAllBytes(path).length);
             fontBuffer.put(Files.readAllBytes(path)).flip();
         } catch (IOException e) {
-            System.err.println("Failed to load font file: " + e.getMessage());
+            logger.error("Failed to load font file: {}", e.getMessage());
             return;
         }
 
@@ -145,7 +119,7 @@ public class Font implements Resource {
             PointerBuffer facePtr = stack.mallocPointer(1);
             int error = FreeType.FT_New_Memory_Face(ftLibrary, fontBuffer, 0, facePtr);
             if (error != 0) {
-                System.err.println("Failed to create new face with error code: " + error);
+                logger.error("Failed to create new face with error code: {}", error);
                 return;
             }
             face = FT_Face.create(facePtr.get());
@@ -162,7 +136,7 @@ public class Font implements Resource {
         for (char c : charset.toCharArray()) {
             int error = FreeType.FT_Load_Char(face, c, FreeType.FT_LOAD_RENDER);
             if (error != 0) {
-                System.err.println("Cannot load character: " + c + " with error code: " + error);
+                logger.warn("Cannot load character: {} with error code: {}", c, error);
                 continue;
             }
 
@@ -186,5 +160,34 @@ public class Font implements Resource {
         }
 
         generateTexture(maxWidth, maxHeight);
+    }
+
+    private void generateTexture(int width, int height) {
+        ByteBuffer textureBuffer = MemoryUtil.memAlloc(width * height);
+        MemoryUtil.memSet(textureBuffer, (byte) 0);
+
+        int xOffset = 0;
+        for (char c : charset.toCharArray()) {
+            Glyph glyph = glyphs.get(c);
+            ByteBuffer bitmap = glyph.getBitmap();
+            if(bitmap != null) {
+                for (int y = 0; y < glyph.height; y++) {
+                    for (int x = 0; x < glyph.width; x++) {
+                        int index = xOffset + x + (y * width);
+                        textureBuffer.put(index, bitmap.get(x + y * glyph.width));
+                    }
+                }
+            }
+            xOffset += glyph.width + 10;
+        }
+
+        try {
+            texture = new Texture(new Vector2i(width, height), textureBuffer, GL_RED);
+            texture.load();
+        } catch (GeodeException e) {
+            throw new RuntimeException(e);
+        }
+        MemoryUtil.memFree(textureBuffer);
+        logger.info("Font '{}' loaded.", filename);
     }
 }

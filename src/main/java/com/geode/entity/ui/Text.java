@@ -4,7 +4,6 @@ import com.geode.core.components.render.RendererComponent;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.meshing.Mesh;
-import com.geode.graphics.meshing.MeshAttribute;
 import com.geode.graphics.meshing.MeshAttributeType;
 import com.geode.graphics.renderer.FontRenderer;
 import com.geode.graphics.ui.text.Font;
@@ -15,7 +14,6 @@ import org.joml.Vector2i;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Text extends SpacialGameObject {
     private String value;
@@ -35,21 +33,25 @@ public class Text extends SpacialGameObject {
         return value;
     }
 
+    private String preprocessValue(String value) {
+        if (value.length() > maxChars) {
+            value = value.substring(0, maxChars - 1);
+        }
+        if (value.contains("\n")) {
+            String[] lines = value.split("\n");
+            StringBuilder localValueBuilder = new StringBuilder();
+            for (int i = lines.length - 1; i >= 0; i--) {
+                localValueBuilder.append(lines[i]).append("\n");
+            }
+            value = localValueBuilder.toString();
+            value = value.substring(0, value.length() - 1);
+        }
+        return value;
+    }
+
     public void setValue(String value) {
-        String localValue = value;
+        String localValue = preprocessValue(value);
         try {
-            if (localValue.length() > maxChars) {
-                localValue = localValue.substring(0, maxChars - 1);
-            }
-            if (localValue.contains("\n")) {
-                String[] lines = localValue.split("\n");
-                StringBuilder localValueBuilder = new StringBuilder();
-                for(int i = lines.length - 1; i >= 0; i--) {
-                    localValueBuilder.append(lines[i]).append("\n");
-                }
-                localValue = localValueBuilder.toString();
-                localValue = localValue.substring(0, localValue.length() - 1);
-            }
             RendererComponent renderer = getComponent(RendererComponent.class);
             int positionSize = renderer.getMesh().getAttribute(MeshAttributeType.POSITION).getElements();
             int uvSize = renderer.getMesh().getAttribute(MeshAttributeType.UV).getElements();
@@ -128,31 +130,8 @@ public class Text extends SpacialGameObject {
             Vector2f maxTextSize = new Vector2f();
             maxTextSize.x = max_xpos - min_xpos;
             maxTextSize.y = max_ypos - min_ypos;
-            for (i = 0; i < globalSize; i += (positionSize + uvSize)) {
-                // normalisation
-                vertices[i] /= maxTextSize.x;
-                //vertices[i+1] += max_text_size.y;
-                vertices[i + 1] /= maxTextSize.y;
-                vertices[i + 1] += 1;
-            }
-            if (alignment != TextAlignment.LEFT) {
-                int lineI = 0;
-                for (Pair<Integer, Float> pair : linesWidths) {
-                    float line_width = (pair.getSecond() - min_xpos) / maxTextSize.x;
-                    float padding_width = 1 - line_width;
-                    float padding = 0;
-                    int line_index = pair.getFirst();
-                    while (lineI < line_index) {
-                        padding = switch (alignment) {
-                            case TextAlignment.RIGHT -> padding_width;
-                            case TextAlignment.CENTER -> (float) (padding_width / 2.0);
-                            default -> padding;
-                        };
-                        vertices[lineI] += padding;
-                        lineI += 5;
-                    }
-                }
-            }
+            normalize(globalSize, positionSize, uvSize, vertices, maxTextSize);
+            align(linesWidths, min_xpos, maxTextSize, vertices);
             Vector3f oldSize = new Vector3f(tr().getSize());
             tr().setSize(new Vector3f(maxTextSize.x, maxTextSize.y, oldSize.z));
             if (stickyIndex == 0)
@@ -169,6 +148,36 @@ public class Text extends SpacialGameObject {
             throw new RuntimeException(e);
         }
         this.value = value;
+    }
+
+    private void align(ArrayList<Pair<Integer, Float>> linesWidths, float min_xpos, Vector2f maxTextSize, float[] vertices) {
+        if (alignment != TextAlignment.LEFT) {
+            int lineI = 0;
+            for (Pair<Integer, Float> pair : linesWidths) {
+                float line_width = (pair.getSecond() - min_xpos) / maxTextSize.x;
+                float padding_width = 1 - line_width;
+                float padding = 0;
+                int line_index = pair.getFirst();
+                while (lineI < line_index) {
+                    padding = switch (alignment) {
+                        case TextAlignment.RIGHT -> padding_width;
+                        case TextAlignment.CENTER -> (float) (padding_width / 2.0);
+                        default -> padding;
+                    };
+                    vertices[lineI] += padding;
+                    lineI += 5;
+                }
+            }
+        }
+    }
+
+    private void normalize(int globalSize, int positionSize, int uvSize, float[] vertices, Vector2f maxTextSize) {
+        int i;
+        for (i = 0; i < globalSize; i += (positionSize + uvSize)) {
+            vertices[i] /= maxTextSize.x;
+            vertices[i + 1] /= maxTextSize.y;
+            vertices[i + 1] += 1;
+        }
     }
 
 
