@@ -10,7 +10,9 @@ import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
 import com.geode.entity.Transform;
 import com.geode.entity.ui.Text;
+import com.geode.entity.ui.TextAlignment;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.Colors;
 import com.geode.graphics.ui.text.Font;
 import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector2f;
@@ -49,7 +51,7 @@ public class My2DScene extends Scene {
             resources.gameSettings.init();
             resources.geode.load();
 
-            resources.terraria_font.configure(50, FontCharsets.ascii());
+            resources.terraria_font.configure(120, FontCharsets.ascii());
             resources.terraria_font.load();
 
         } catch (GeodeException e) {
@@ -62,13 +64,14 @@ public class My2DScene extends Scene {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
-        text = new Text("Arthur le best", resources.terraria_font, getFontRenderer());
+        text = new Text("Arthur\nle best de tous les best all time", resources.terraria_font, getFontRenderer());
+        text.setColor(Colors.orange());
 
-
-        text.setTextHeight(30);
+        text.setAlignment(TextAlignment.CENTER);
+        text.setTextHeight(50);
         text.tr().setPosition(new Vector3f(20, 20, 0));
 
-        text.getComponent(LambdaComponent.class).set(() -> text.setValue(Time.getCurrentFps() + " fps"));
+        //text.getComponent(LambdaComponent.class).set(() -> text.setValue(Time.getCurrentFps() + " fps"));
 
         goManager.layer().add(text);
 
