@@ -2,23 +2,18 @@ package com.geode.test;
 
 import com.geode.core.*;
 import com.geode.core.components.LambdaComponent;
-import com.geode.core.components.render.RendererComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.core.time.Time;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
-import com.geode.entity.Transform;
 import com.geode.entity.ui.Text;
 import com.geode.entity.ui.TextAlignment;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Colors;
-import com.geode.graphics.ui.text.Font;
 import com.geode.graphics.ui.text.FontCharsets;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.lwjgl.PointerBuffer;
 
 @SceneEntry(value = "my_2d_scene", first = true)
 public class My2DScene extends Scene {
@@ -64,23 +59,35 @@ public class My2DScene extends Scene {
         System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
-        text = new Text("Arthur\nle best de tous les best all time", resources.terraria_font, getFontRenderer());
-        text.setColor(Colors.orange());
+        text = new Text("Arthur\nDetrembleur", resources.terraria_font, getFontRenderer());
+        text.setColor(Colors.black());
 
         text.setAlignment(TextAlignment.CENTER);
-        text.setTextHeight(50);
-        text.tr().setPosition(new Vector3f(20, 20, 0));
+        text.tr().setCenterOrigin();
+        text.setTextHeight(100);
+        text.tr().setPosition(new Vector3f(0, 0, 0));
 
-        //text.getComponent(LambdaComponent.class).set(() -> text.setValue(Time.getCurrentFps() + " fps"));
+        text.getComponent(LambdaComponent.class).set(() -> {
+            text.tr().translateX((float) (50*Time.getDelta()));
+        });
 
-        goManager.layer().add(text);
 
         SpacialGameObject gameObject = new SpacialGameObject();
         gameObject.assignDefaultRenderer(getTextureRenderer(), resources.geode);
         gameObject.tr().setSize(resources.geode.getSize().mul(3));
         gameObject.tr().setCenterOrigin();
         gameObject.tr().setPosition(windowManager.getWindow().getSize().div(2));
+        gameObject.getComponent(LambdaComponent.class).set(() -> {
+            gameObject.tr().rotate((float) (45.0f * Time.getDelta()));
+            gameObject.tr().setPosition(mouseManager.getPosition(getDefault2DCamera()));
+        });
+
         goManager.layer().add(gameObject);
+        goManager.layer().add(text);
+
+        text.tr().setParentModel(gameObject.tr().getModel());
+
+
 
 
         //default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));

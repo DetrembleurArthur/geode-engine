@@ -1,16 +1,17 @@
 package com.geode.entity;
 
 import com.geode.core.Updateable;
-import com.geode.core.components.render.RendererComponent;
 import com.geode.exceptions.GeodeException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 
 public class GameObjectLayer implements AutoCloseable, Updateable {
 
+    private static final Logger logger = LogManager.getLogger(GameObjectLayer.class);
     private final ArrayList<GameObject> gameObjects = new ArrayList<>();
     private final ArrayList<SpacialGameObject> spatialGameObjects = new ArrayList<>();
-    private final ArrayList<RendererComponent> renderersCache = new ArrayList<>();
 
     @Override
     public void update() {
@@ -23,19 +24,14 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
     }
 
     public void draw() {
-        for (RendererComponent component : renderersCache) {
-            component.render();
+        for (SpacialGameObject spatialGameObject : spatialGameObjects) {
+            spatialGameObject.draw();
         }
     }
 
     public GameObjectLayer add(GameObject gameObject) {
         if (gameObject instanceof SpacialGameObject) {
-            try {
-                renderersCache.add(gameObject.getComponent(RendererComponent.class));
-                spatialGameObjects.add((SpacialGameObject) gameObject);
-            } catch (GeodeException e) {
-                throw new RuntimeException(e);
-            }
+            spatialGameObjects.add((SpacialGameObject) gameObject);
         } else {
             gameObjects.add(gameObject);
         }
@@ -49,12 +45,7 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
 
     public GameObjectLayer del(GameObject gameObject) {
         if (gameObject instanceof SpacialGameObject) {
-            try {
-                renderersCache.remove(gameObject.getComponent(RendererComponent.class));
-                spatialGameObjects.remove(gameObject);
-            } catch (GeodeException e) {
-                throw new RuntimeException(e);
-            }
+            spatialGameObjects.remove(gameObject);
         } else {
             gameObjects.remove(gameObject);
         }
@@ -71,7 +62,19 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
         for (GameObject gameObject : gameObjects) {
             gameObject.close();
         }
+        for (SpacialGameObject gameObject : spatialGameObjects) {
+            gameObject.close();
+        }
+        logger.info("clear {} game objects", (gameObjects.size() + spatialGameObjects.size()));
         gameObjects.clear();
-        renderersCache.clear();
+        spatialGameObjects.clear();
+    }
+
+    public ArrayList<SpacialGameObject> getSpatialGameObjects() {
+        return spatialGameObjects;
+    }
+
+    public ArrayList<GameObject> getGameObjects() {
+        return gameObjects;
     }
 }

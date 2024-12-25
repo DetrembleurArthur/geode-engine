@@ -48,6 +48,10 @@ public class GameObjectManager implements Initializable, AutoCloseable, Updateab
         return layer;
     }
 
+    public ArrayList<GameObjectLayer> getLayers() {
+        return layers;
+    }
+
     @Override
     public void close() throws Exception {
         for (GameObjectLayer layer : layers) {

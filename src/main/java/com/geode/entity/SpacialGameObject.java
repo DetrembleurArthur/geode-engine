@@ -1,12 +1,15 @@
 package com.geode.entity;
 
+import com.geode.core.Drawable;
+import com.geode.core.components.base.Component;
+import com.geode.core.components.base.DrawableComponent;
 import com.geode.core.components.render.RendererComponent;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Texture;
 import com.geode.graphics.renderer.Renderer;
 import org.joml.Vector4f;
 
-public class SpacialGameObject extends GameObject {
+public class SpacialGameObject extends GameObject implements Drawable {
     private Transform transform = new Transform();
     private Vector4f color = new Vector4f(1, 1, 1, 1);
 
@@ -84,5 +87,14 @@ public class SpacialGameObject extends GameObject {
             }
         }
         rendererComponent.setRenderer(renderer);
+    }
+
+    @Override
+    public void draw() {
+        for(Component component : components) {
+            if(Drawable.class.isAssignableFrom(component.getClass())) {
+                ((Drawable) component).draw();
+            }
+        }
     }
 }

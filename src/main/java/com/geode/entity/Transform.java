@@ -5,6 +5,7 @@ import org.joml.Math;
 
 public class Transform {
     private Matrix4f model = new Matrix4f();
+    private Matrix4f parentModel = null;
     private boolean dirty = true;
     private Vector3f position = new Vector3f();
     private Vector3f size = new Vector3f(1);
@@ -22,7 +23,24 @@ public class Transform {
                     .scale(size);
             dirty = false;
         }
+        if (parentModel != null) {
+            Vector3f parentScale = new Vector3f();
+            parentModel.getScale(parentScale);
+            Vector3f inverseParentScale = new Vector3f(
+                    1.0f / parentScale.x,
+                    1.0f / parentScale.y,
+                    1.0f / parentScale.z
+            );
+            Matrix4f inverseScaleMatrix = new Matrix4f().scaling(inverseParentScale);
+            return new Matrix4f(parentModel)
+                    .mul(inverseScaleMatrix)
+                    .mul(model);
+        }
         return model;
+    }
+
+    public void setParentModel(Matrix4f parentModel) {
+        this.parentModel = parentModel;
     }
 
     public void setSize(Vector3f size) {

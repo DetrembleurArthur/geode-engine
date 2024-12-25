@@ -1,6 +1,6 @@
 package com.geode.core.components.render;
 
-import com.geode.core.components.base.StaticComponent;
+import com.geode.core.components.base.DrawableComponent;
 import com.geode.entity.GameObject;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
@@ -8,7 +8,7 @@ import com.geode.graphics.Texture;
 import com.geode.graphics.meshing.Mesh;
 import com.geode.graphics.renderer.Renderer;
 
-public class RendererComponent extends StaticComponent {
+public class RendererComponent extends DrawableComponent {
 
     private Renderer<?> renderer;
     private Mesh mesh;
@@ -63,7 +63,8 @@ public class RendererComponent extends StaticComponent {
         mesh.setTextured(this.texture != null);
     }
 
-    public void render() {
+    @Override
+    public void draw() {
         if (renderer != null && mesh != null && mesh.isReady()) {
             renderer.start();
             SpacialGameObject spacial = (SpacialGameObject) child;

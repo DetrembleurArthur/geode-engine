@@ -23,24 +23,33 @@ public class GameObject implements Initializable, Updateable, Closeable {
 
     @Override
     public void update() {
-        for(Component component : components) {
-            if(component instanceof UpdateableComponent) {
-                ((UpdateableComponent) component).update();
+        for (Component component : components) {
+            if (Updateable.class.isAssignableFrom(component.getClass())) {
+                ((Updateable) component).update();
             }
         }
     }
 
     @Override
     public void close() throws Exception {
-        for(Component component : components) {
+        for (Component component : components) {
             component.close();
         }
         components.clear();
     }
 
+    public <T extends Component> boolean hasComponent(Class<T> clazz) {
+        for (Component component : components) {
+            if (component.getClass().equals(clazz)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public <T extends Component> T getComponent(Class<T> clazz) throws GeodeException {
-        for(Component component : components) {
-            if(component.getClass().equals(clazz)) {
+        for (Component component : components) {
+            if (component.getClass().equals(clazz)) {
                 return (T) component;
             }
         }
@@ -56,13 +65,13 @@ public class GameObject implements Initializable, Updateable, Closeable {
 
     public <T extends Component> void removeComponent(Class<T> clazz) throws Exception {
         Component target = null;
-        for(Component component : components) {
-            if(component.getClass().equals(clazz)) {
+        for (Component component : components) {
+            if (component.getClass().equals(clazz)) {
                 target = component;
                 break;
             }
         }
-        if(target != null) {
+        if (target != null) {
             components.remove(target);
             target.close();
         }
@@ -70,8 +79,8 @@ public class GameObject implements Initializable, Updateable, Closeable {
 
     public void removeComponent(Object tag) throws Exception {
         ArrayList<Component> targets = new ArrayList<>();
-        for(Component component : components) {
-            if(component.tag() == tag) {
+        for (Component component : components) {
+            if (component.tag() == tag) {
                 targets.add(component);
                 component.close();
             }

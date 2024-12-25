@@ -127,11 +127,11 @@ public class My3DScene extends Scene {
 
         rendererComponent = cube.getComponent(RendererComponent.class);
         if(rendererComponent != null) {
-            rendererComponent.render();
+            rendererComponent.draw();
         }
         rendererComponent = gameObject.getComponent(RendererComponent.class);
         if(rendererComponent != null) {
-            rendererComponent.render();
+            rendererComponent.draw();
         }
     }
 

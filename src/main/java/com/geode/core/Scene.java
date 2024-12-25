@@ -2,10 +2,8 @@ package com.geode.core;
 
 import com.geode.entity.GameObjectManager;
 import com.geode.exceptions.GeodeException;
-import com.geode.graphics.Shader;
 import com.geode.graphics.camera.Camera2D;
 import com.geode.graphics.renderer.FontRenderer;
-import com.geode.graphics.renderer.Renderer;
 import com.geode.graphics.renderer.ShapeRenderer;
 import com.geode.graphics.renderer.TextureRenderer;
 
