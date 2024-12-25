@@ -1,13 +1,12 @@
 package com.geode.test;
 
 import com.geode.core.*;
-import com.geode.core.components.render.RendererComponent;
+import com.geode.core.components.RendererComponent;
 import com.geode.core.mouse.ButtonState;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
-import com.geode.graphics.camera.Camera2D;
 import com.geode.graphics.camera.Camera3D;
 import com.geode.graphics.renderer.Renderer;
 import org.joml.Vector2f;

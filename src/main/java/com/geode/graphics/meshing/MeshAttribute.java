@@ -64,6 +64,14 @@ public class MeshAttribute {
         return size;
     }
 
+    public static int calculateTotalElements(List<MeshAttribute> attributes) {
+        int size = 0;
+        for (MeshAttribute attribute : attributes) {
+            size += attribute.getElements();
+        }
+        return size;
+    }
+
     public static MeshAttribute createFloat(int elements) {
         return new MeshAttribute(elements, GL11.GL_FLOAT, Float.BYTES);
     }

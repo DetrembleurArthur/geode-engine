@@ -4,6 +4,7 @@ import com.geode.core.*;
 import com.geode.core.components.LambdaComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.time.ActionTimer;
 import com.geode.core.time.Time;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
@@ -35,15 +36,12 @@ public class My2DScene extends Scene {
 
     private boolean pressed = false;
 
-    private Timer timer;
+    private ActionTimer timer;
 
     @Override
     public void init() {
         try {
-            resources.classic.load();
-            resources.texture.load();
-            resources.blob_sheet.init();
-            resources.gameSettings.init();
+
             resources.geode.load();
 
             resources.terraria_font.configure(120, FontCharsets.ascii());
@@ -56,7 +54,7 @@ public class My2DScene extends Scene {
 
     @Override
     public void select() throws GeodeException {
-        System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
+        //System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
         text = new Text("Arthur\nDetrembleur", resources.terraria_font, getFontRenderer());
@@ -92,12 +90,15 @@ public class My2DScene extends Scene {
 
         //default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
 
-        timer = new Timer(3);
-
+        timer = new ActionTimer(3);
+        timer.setAutoRestart(true);
+        timer.setStartCondition(() -> Math.random() > 0.9);
+        timer.setOnStop(() -> System.err.println("timer end"));
     }
 
     @Override
     public void update(double dt) {
+        timer.update();
         /*
         if (!pressed && mouseManager.isLeftButton(ButtonState.PRESSED)) {
             pressed = true;

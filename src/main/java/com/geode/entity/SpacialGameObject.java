@@ -2,8 +2,7 @@ package com.geode.entity;
 
 import com.geode.core.Drawable;
 import com.geode.core.components.base.Component;
-import com.geode.core.components.base.DrawableComponent;
-import com.geode.core.components.render.RendererComponent;
+import com.geode.core.components.RendererComponent;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Texture;
 import com.geode.graphics.renderer.Renderer;

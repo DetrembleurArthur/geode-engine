@@ -25,11 +25,23 @@ public class Timer {
         startTimestamp = 0;
     }
 
+    public boolean isStarted() {
+        return startTimestamp > 0;
+    }
+
     public double getElapsedTime() {
         return Time.get_sec() - startTimestamp;
     }
 
     public boolean isCompleted() {
         return getElapsedTime() >= delay;
+    }
+
+    public double getStartTimestamp() {
+        return startTimestamp;
+    }
+
+    public double getDelay() {
+        return delay;
     }
 }

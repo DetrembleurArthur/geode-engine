@@ -1,4 +1,4 @@
-package com.geode.core.components.render;
+package com.geode.core.components;
 
 import com.geode.core.components.base.DrawableComponent;
 import com.geode.entity.GameObject;

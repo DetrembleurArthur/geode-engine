@@ -75,7 +75,7 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
         resources.forEach((s, resource) -> {
             try {
                 if (resource.isLoaded()) {
-                    logger.info("close Resource<" + resource.getClass().getName() + "> : " + s);
+                    logger.info("close Resource<{}> : {}", resource.getClass().getName(), s);
                     resource.close();
                 }
             } catch (Exception e) {

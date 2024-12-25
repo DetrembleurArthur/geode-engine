@@ -1,6 +1,6 @@
 package com.geode.entity.ui;
 
-import com.geode.core.components.render.RendererComponent;
+import com.geode.core.components.RendererComponent;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.meshing.Mesh;
