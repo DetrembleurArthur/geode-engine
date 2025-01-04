@@ -5,6 +5,7 @@ import com.geode.core.mouse.ButtonState;
 import com.geode.core.mouse.Cursors;
 import com.geode.core.reflections.Singleton;
 import com.geode.core.mouse.MouseInput;
+import com.geode.core.registry.CameraRegistry;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Image;
 import com.geode.graphics.camera.Camera2D;
@@ -30,7 +31,7 @@ public class MouseManager implements Initializable, Closeable {
     private long cursor = 0;
 
     MouseManager(Window window) throws GeodeException {
-        if(instance == null)
+        if (instance == null)
             instance = this;
         else
             throw new GeodeException("MouseManager is a singleton");
@@ -50,7 +51,7 @@ public class MouseManager implements Initializable, Closeable {
         double[] x = new double[1];
         double[] y = new double[1];
         GLFW.glfwGetCursorPos(window.getPointer(), x, y);
-        return new Vector2i((int)x[0], (int)y[0]);
+        return new Vector2i((int) x[0], (int) y[0]);
     }
 
     public Vector2i getPosition(Camera2D camera) {
@@ -58,17 +59,19 @@ public class MouseManager implements Initializable, Closeable {
         return Utils.screenToWorld(mp, camera);
     }
 
+    public Vector2i getPositionFromCamera2D() {
+        return getPosition(CameraRegistry.getInstance().get(Camera2D.class));
+    }
+
     public void hide() {
         glfwSetInputMode(window.getPointer(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     }
 
-    public void lock()
-    {
+    public void lock() {
         glfwSetInputMode(window.getPointer(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
-    public void captured()
-    {
+    public void captured() {
         glfwSetInputMode(window.getPointer(), GLFW_CURSOR, GLFW_CURSOR_CAPTURED);
     }
 
@@ -81,53 +84,44 @@ public class MouseManager implements Initializable, Closeable {
         glfwSetCursorPos(window.getPointer(), pos.x, pos.y);
     }
 
-    public void sticky(boolean value)
-    {
+    public void sticky(boolean value) {
         glfwSetInputMode(window.getPointer(), GLFW_STICKY_MOUSE_BUTTONS, value ? GLFW_TRUE : GLFW_FALSE);
     }
 
-    public boolean hovered()
-    {
+    public boolean hovered() {
         return glfwGetWindowAttrib(window.getPointer(), GLFW_HOVERED) != 0;
     }
 
-    public int buttonState(Button btn)
-    {
+    public int buttonState(Button btn) {
         return glfwGetMouseButton(window.getPointer(), btn.getGlfwId());
     }
 
-    public void normal()
-    {
+    public void normal() {
         glfwSetInputMode(window.getPointer(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 
-    public boolean isButton(Button btn, ButtonState state)
-    {
+    public boolean isButton(Button btn, ButtonState state) {
         return buttonState(btn) == state.getGlfwId();
     }
 
-    public boolean isLeftButton(ButtonState state)
-    {
+    public boolean isLeftButton(ButtonState state) {
         return isButton(Button.LEFT, state);
     }
 
-    public boolean isRightButton(ButtonState state)
-    {
+    public boolean isRightButton(ButtonState state) {
         return isButton(Button.RIGHT, state);
     }
 
-    public boolean isMiddleButton(ButtonState state)
-    {
+    public boolean isMiddleButton(ButtonState state) {
         return isButton(Button.MIDDLE, state);
     }
 
-    public boolean isAnyButtonPressed()
-    {
+    public boolean isAnyButtonPressed() {
         return isLeftButton(ButtonState.PRESSED) || isRightButton(ButtonState.PRESSED) || isMiddleButton(ButtonState.PRESSED);
     }
 
     private void destroyCursor() {
-        if(this.cursor != 0) {
+        if (this.cursor != 0) {
             glfwDestroyCursor(this.cursor);
             this.cursor = 0;
         }
@@ -135,14 +129,14 @@ public class MouseManager implements Initializable, Closeable {
 
     public void setCursor(Cursors cursor) {
         destroyCursor();
-        if(cursor != Cursors.DEFAULT)
+        if (cursor != Cursors.DEFAULT)
             this.cursor = glfwCreateStandardCursor(cursor.getGlfwId());
         glfwSetCursor(window.getPointer(), this.cursor);
     }
 
     public void setCursor(Image image) {
         destroyCursor();
-        this.cursor =  glfwCreateCursor(image.getGlfwImage(), 0, 0);
+        this.cursor = glfwCreateCursor(image.getGlfwImage(), 0, 0);
         glfwSetCursor(window.getPointer(), this.cursor);
     }
 
@@ -150,7 +144,7 @@ public class MouseManager implements Initializable, Closeable {
         Image image = new Image(imagePath);
         image.init();
         destroyCursor();
-        this.cursor =  glfwCreateCursor(image.getGlfwImage(), 0, 0);
+        this.cursor = glfwCreateCursor(image.getGlfwImage(), 0, 0);
         glfwSetCursor(window.getPointer(), this.cursor);
         image.close();
     }

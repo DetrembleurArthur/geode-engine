@@ -3,6 +3,8 @@ package com.geode.core;
 import com.geode.core.reflections.Extensions;
 import com.geode.core.reflections.PackageClassLoaderManager;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.registry.CameraRegistry;
+import com.geode.core.registry.RendererRegistry;
 import com.geode.core.time.Time;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Model;
@@ -65,6 +67,11 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         resourceManagers.get(Shader.class)
                 .addResource("font", "default", Extensions.SHA_GLSL, resourceLocator)
                 .load();
+        resourceManagers.get(Shader.class)
+                .addResource("font-colored", "default", Extensions.SHA_GLSL, resourceLocator)
+                .load();
+        CameraRegistry.getInstance().init();
+        RendererRegistry.getInstance().init();
         sceneManager.init();
         logger.info("initialized !");
     }

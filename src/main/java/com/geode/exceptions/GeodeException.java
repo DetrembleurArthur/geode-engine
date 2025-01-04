@@ -1,6 +1,6 @@
 package com.geode.exceptions;
 
-public class GeodeException extends Exception {
+public class GeodeException extends RuntimeException {
     public GeodeException() {
     }
 

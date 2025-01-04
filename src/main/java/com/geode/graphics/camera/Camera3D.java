@@ -24,6 +24,9 @@ public class Camera3D extends Camera
 
 	private float verticalAngle, horizontalAngle;
 
+	public Camera3D() {
+		this(WindowManager.getInstance());
+	}
 
 	public Camera3D(WindowManager windowManager)
 	{

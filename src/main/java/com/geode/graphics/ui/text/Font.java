@@ -136,7 +136,7 @@ public class Font implements Resource {
         for (char c : charset.toCharArray()) {
             int error = FreeType.FT_Load_Char(face, c, FreeType.FT_LOAD_RENDER);
             if (error != 0) {
-                logger.warn("Cannot load character: {} with error code: {}", c, error);
+                logger.error("Cannot load character: {} with error code: {}", c, error);
                 continue;
             }
 

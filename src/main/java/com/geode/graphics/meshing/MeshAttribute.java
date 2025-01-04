@@ -2,6 +2,7 @@ package com.geode.graphics.meshing;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MeshAttribute {
@@ -78,5 +79,9 @@ public class MeshAttribute {
 
     public static MeshAttribute createInt(int elements) {
         return new MeshAttribute(elements, GL11.GL_INT, Integer.BYTES);
+    }
+
+    public static MeshAttribute get(ArrayList<MeshAttribute> attributes, MeshAttributeType attributeType) {
+        return attributes.stream().filter(meshAttribute -> meshAttribute.getAttributeType().equals(attributeType)).findFirst().orElse(null);
     }
 }

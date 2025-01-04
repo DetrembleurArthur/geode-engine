@@ -23,7 +23,7 @@ public class Camera2D extends Camera {
 
     public Camera2D(WindowManager windowManager) {
         adaptOnResize(windowManager);
-        logger.info("Camera2D setup: " + ortho);
+        logger.info("Camera2D setup: {}", ortho);
     }
 
     @Override

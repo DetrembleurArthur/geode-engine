@@ -9,7 +9,7 @@ public class FontCharsets {
 
     public static String ascii() {
         StringBuilder charset = new StringBuilder();
-        for (int i = 0; i < 128; i++) {
+        for (int i = 0; i < 254; i++) {
             charset.append((char) i);
         }
         return charset.toString();

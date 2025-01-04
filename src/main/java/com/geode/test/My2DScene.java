@@ -2,16 +2,22 @@ package com.geode.test;
 
 import com.geode.core.*;
 import com.geode.core.components.LambdaComponent;
+import com.geode.core.components.RendererComponent;
 import com.geode.core.reflections.Inject;
 import com.geode.core.reflections.SceneEntry;
+import com.geode.core.registry.RendererRegistry;
 import com.geode.core.time.ActionTimer;
 import com.geode.core.time.Time;
 import com.geode.core.time.Timer;
 import com.geode.entity.SpacialGameObject;
+import com.geode.entity.TexturedShape;
 import com.geode.entity.ui.Text;
 import com.geode.entity.ui.TextAlignment;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Colors;
+import com.geode.graphics.camera.Camera2D;
+import com.geode.graphics.renderer.FontRenderer;
+import com.geode.graphics.renderer.ShapeRenderer;
 import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -57,27 +63,28 @@ public class My2DScene extends Scene {
         //System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
-        text = new Text("Arthur\nDetrembleur", resources.terraria_font, getFontRenderer());
-        text.setColor(Colors.black());
+        text = new Text("Bien que chaque char ait une taille fixe de 2 octets,\ncertains caractères Unicode nécessitent plus de 16 bits pour être représentés.\nDans ce cas, une paire de char (appelée surrogate pair) est utilisée pour représenter ces caractères.", resources.terraria_font);
+        text.setColor(Colors.orange());
+        text.enableRichColor();
 
         text.setAlignment(TextAlignment.CENTER);
         text.tr().setCenterOrigin();
-        text.setTextHeight(100);
+        text.setTextWidth(1200);
         text.tr().setPosition(new Vector3f(0, 0, 0));
 
+
         text.getComponent(LambdaComponent.class).set(() -> {
-            text.tr().translateX((float) (50*Time.getDelta()));
+            //text.tr().translateX((float) (50*Time.getDelta()));
         });
 
 
-        SpacialGameObject gameObject = new SpacialGameObject();
-        gameObject.assignDefaultRenderer(getTextureRenderer(), resources.geode);
+        TexturedShape gameObject = new TexturedShape(resources.geode);
         gameObject.tr().setSize(resources.geode.getSize().mul(3));
         gameObject.tr().setCenterOrigin();
         gameObject.tr().setPosition(windowManager.getWindow().getSize().div(2));
         gameObject.getComponent(LambdaComponent.class).set(() -> {
-            gameObject.tr().rotate((float) (45.0f * Time.getDelta()));
-            gameObject.tr().setPosition(mouseManager.getPosition(getDefault2DCamera()));
+            //gameObject.tr().rotate((float) (45.0f * Time.getDelta()));
+            gameObject.tr().setPosition(mouseManager.getPositionFromCamera2D());
         });
 
         goManager.layer().add(gameObject);
@@ -86,19 +93,12 @@ public class My2DScene extends Scene {
         text.tr().setParentModel(gameObject.tr().getModel());
 
 
-
-
         //default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
 
-        timer = new ActionTimer(3);
-        timer.setAutoRestart(true);
-        timer.setStartCondition(() -> Math.random() > 0.9);
-        timer.setOnStop(() -> System.err.println("timer end"));
     }
 
     @Override
     public void update(double dt) {
-        timer.update();
         /*
         if (!pressed && mouseManager.isLeftButton(ButtonState.PRESSED)) {
             pressed = true;

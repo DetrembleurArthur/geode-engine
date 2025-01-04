@@ -65,8 +65,10 @@ public class Mesh implements Initializable, Closeable {
     @Override
     public void close() throws Exception {
         bind();
-        for (int i = 0; i < attributes.size(); i++) {
-            GL30.glDisableVertexAttribArray(i);
+        if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i++) {
+                GL30.glDisableVertexAttribArray(i);
+            }
         }
         unbind();
         if (vao != 0)
