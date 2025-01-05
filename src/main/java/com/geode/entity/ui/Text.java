@@ -4,12 +4,18 @@ import com.geode.core.components.RendererComponent;
 import com.geode.core.registry.RendererRegistry;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
+import com.geode.graphics.meshing.Mesh;
+import com.geode.graphics.meshing.MeshAttribute;
+import com.geode.graphics.meshing.MeshAttributeType;
 import com.geode.graphics.meshing.TextMeshBuilder;
 import com.geode.graphics.renderer.FontRenderer;
-import com.geode.graphics.renderer.ShapeRenderer;
 import com.geode.graphics.ui.text.Font;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Text extends SpacialGameObject {
     private String value;
@@ -18,6 +24,7 @@ public class Text extends SpacialGameObject {
     private final Font font;
     private int stickyIndex = 0;
     private TextAlignment alignment = TextAlignment.LEFT;
+    private ArrayList<TextCharacterAttributes> textCharacterAttributes;
 
     public Text(String text, Font font) {
         this(text, font, RendererRegistry.getInstance().get(FontRenderer.class));
@@ -30,10 +37,52 @@ public class Text extends SpacialGameObject {
         setValue(text);
     }
 
-    public void enableRichColor() {
-        FontRenderer renderer = (FontRenderer) getComponent(RendererComponent.class).getRenderer();
-        renderer.setAsColorized();
-        setValue(value);
+    private void createCharacterAttributes() {
+        textCharacterAttributes = new ArrayList<>();
+    }
+
+    private RendererComponent enableRichColor() {
+        RendererComponent component = getComponent(RendererComponent.class);
+        FontRenderer renderer = (FontRenderer) component.getRenderer();
+        if (!renderer.isColorized()) {
+            renderer.setAsColorized();
+            createCharacterAttributes();
+            setValue(value);
+            for (int i = 0; i < value.length(); i++) {
+                textCharacterAttributes.add(new TextCharacterAttributes());
+            }
+        }
+        return component;
+    }
+
+    public void setCharacterColor(int charIndex, Vector4f color) {
+        if (charIndex < value.length()) {
+            RendererComponent component = enableRichColor();
+            FontRenderer renderer = (FontRenderer) component.getRenderer();
+            Mesh mesh = component.getMesh();
+            ArrayList<MeshAttribute> attributes = renderer.getShader().getMeshAttributes();
+            float[] vecColor = new float[]{color.x, color.y, color.z, color.w};
+            TextCharacterAttributes attribute = textCharacterAttributes.get(charIndex);
+            attribute.setRed(color.x);
+            attribute.setGreen(color.y);
+            attribute.setBlue(color.z);
+            attribute.setAlpha(color.w);
+            mesh.updateFaceVertices(attributes, MeshAttributeType.COLOR, charIndex, vecColor);
+        }
+    }
+
+    public void setCharacterColors(int charIndex, Vector4f[] colors) {
+        if (charIndex < value.length()) {
+            RendererComponent component = enableRichColor();
+            FontRenderer renderer = (FontRenderer) component.getRenderer();
+            Mesh mesh = component.getMesh();
+            ArrayList<MeshAttribute> attributes = renderer.getShader().getMeshAttributes();
+            float[][] vecColor = new float[4][4];
+            for (int i = 0; i < 4; i++) {
+                System.arraycopy(new float[]{colors[i].x, colors[i].y, colors[i].z, colors[i].w}, 0, vecColor[i], 0, 4);
+            }
+            mesh.updateFaceVertices(attributes, MeshAttributeType.COLOR, charIndex, vecColor);
+        }
     }
 
     public String getValue() {
@@ -54,6 +103,14 @@ public class Text extends SpacialGameObject {
             value = value.substring(0, value.length() - 1);
         }
         return value;
+    }
+
+    private void updateCharacterAttributes() {
+        int i = 0;
+        for (TextCharacterAttributes characterAttributes : textCharacterAttributes) {
+            setCharacterColor(i, characterAttributes.getColor());
+            i++;
+        }
     }
 
     public void setValue(String value) {
@@ -113,6 +170,8 @@ public class Text extends SpacialGameObject {
     public void setAlignment(TextAlignment alignment) {
         this.alignment = alignment;
         setValue(value);
+        if (textCharacterAttributes != null)
+            updateCharacterAttributes();
     }
 
     public int getStickyIndex() {
@@ -122,5 +181,7 @@ public class Text extends SpacialGameObject {
     public void setStickyIndex(int stickyIndex) {
         this.stickyIndex = stickyIndex;
         setValue(value);
+        if (textCharacterAttributes != null)
+            updateCharacterAttributes();
     }
 }

@@ -16,6 +16,7 @@ import com.geode.entity.ui.TextAlignment;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Colors;
 import com.geode.graphics.camera.Camera2D;
+import com.geode.graphics.meshing.MeshAttributeType;
 import com.geode.graphics.renderer.FontRenderer;
 import com.geode.graphics.renderer.ShapeRenderer;
 import com.geode.graphics.ui.text.FontCharsets;
@@ -39,11 +40,6 @@ public class My2DScene extends Scene {
 
     private Text text;
 
-
-    private boolean pressed = false;
-
-    private ActionTimer timer;
-
     @Override
     public void init() {
         try {
@@ -63,14 +59,24 @@ public class My2DScene extends Scene {
         //System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
         windowManager.getWindow().setClearColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
 
-        text = new Text("Bien que chaque char ait une taille fixe de 2 octets,\ncertains caractères Unicode nécessitent plus de 16 bits pour être représentés.\nDans ce cas, une paire de char (appelée surrogate pair) est utilisée pour représenter ces caractères.", resources.terraria_font);
-        text.setColor(Colors.orange());
-        text.enableRichColor();
+        text = new Text("Arthur", resources.terraria_font);
+        text.setColor(Colors.white());
 
         text.setAlignment(TextAlignment.CENTER);
+        text.setCharacterColors(3, new Vector4f[]{
+                Colors.orange(),
+                Colors.red(),
+                Colors.blue(),
+                Colors.green()
+        });
+
+
+
         text.tr().setCenterOrigin();
-        text.setTextWidth(1200);
+        text.setTextWidth(300);
         text.tr().setPosition(new Vector3f(0, 0, 0));
+
+
 
 
         text.getComponent(LambdaComponent.class).set(() -> {

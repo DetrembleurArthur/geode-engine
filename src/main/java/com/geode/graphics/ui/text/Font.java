@@ -1,6 +1,5 @@
 package com.geode.graphics.ui.text;
 
-import com.geode.core.Application;
 import com.geode.core.FontManager;
 import com.geode.core.Resource;
 import com.geode.exceptions.GeodeException;

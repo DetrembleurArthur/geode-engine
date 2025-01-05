@@ -84,4 +84,26 @@ public class MeshAttribute {
     public static MeshAttribute get(ArrayList<MeshAttribute> attributes, MeshAttributeType attributeType) {
         return attributes.stream().filter(meshAttribute -> meshAttribute.getAttributeType().equals(attributeType)).findFirst().orElse(null);
     }
+
+    public static int getOffset(ArrayList<MeshAttribute> attributes, MeshAttributeType attributeType) {
+        int offset = 0;
+        for(MeshAttribute attribute : attributes) {
+            if(attribute.getAttributeType().equals(attributeType)) {
+               break;
+            }
+            offset += attribute.getElements();
+        }
+        return offset;
+    }
+
+    public static int getSize(ArrayList<MeshAttribute> attributes, MeshAttributeType attributeType) {
+        int size = 0;
+        for(MeshAttribute attribute : attributes) {
+            if(attribute.getAttributeType().equals(attributeType)) {
+                break;
+            }
+            size += attribute.getTotalSize();
+        }
+        return size;
+    }
 }

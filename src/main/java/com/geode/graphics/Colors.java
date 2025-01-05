@@ -75,4 +75,12 @@ public class Colors {
     public static Vector4f transparent() {
         return new Vector4f(_TRANSPARENT);
     }
+
+    public static Vector4f rgba(int red, int green, int blue, int alpha) {
+        return new Vector4f(red / 255.f, green / 255.f, blue / 255.f, alpha / 255.f);
+    }
+
+    public static Vector4f rgb(int red, int green, int blue) {
+        return rgba(red, green, blue, 255);
+    }
 }

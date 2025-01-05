@@ -9,6 +9,8 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Mesh implements Initializable, Closeable {
@@ -82,6 +84,50 @@ public class Mesh implements Initializable, Closeable {
 
     public MeshAttribute getAttribute(MeshAttributeType type) {
         return attributes.stream().filter(meshAttribute -> meshAttribute.getAttributeType().equals(type)).toList().getFirst();
+    }
+
+    public float[] getVertex(ArrayList<MeshAttribute> attributes, MeshAttributeType type, int vertexNumber) {
+        MeshAttribute attribute = MeshAttribute.get(attributes, type);
+        int size = MeshAttribute.getSize(attributes, type);
+        int vertexSize = MeshAttribute.calculateTotalSize(attributes);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(attribute.getTotalSize());
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+        GL30.glGetBufferSubData(GL15.GL_ARRAY_BUFFER, (long) vertexSize * vertexNumber + size, buffer);
+        float[] result = new float[attribute.getElements()];
+        buffer.asFloatBuffer().get(result);
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        buffer.clear();
+        return result;
+    }
+
+    public void updateVertex(ArrayList<MeshAttribute> attributes, MeshAttributeType type, int vertexNumber, float[] updatedValues) {
+        int size = MeshAttribute.getSize(attributes, type);
+        int vertexSize = MeshAttribute.calculateTotalSize(attributes);
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+        GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, (long) vertexSize * vertexNumber + size, updatedValues);
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
+
+    public void updateFaceVertices(ArrayList<MeshAttribute> attributes, MeshAttributeType type, int faceNumber, float[][] updatedValues) {
+        if (updatedValues.length == 4) {
+            int size = MeshAttribute.getSize(attributes, type);
+            int vertexSize = MeshAttribute.calculateTotalSize(attributes);
+            GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+            for (int i = 0; i < 4; i++) {
+                GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, (long) vertexSize * faceNumber * 4 + (long) i * vertexSize + size, updatedValues[i]);
+            }
+
+            GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        }
+    }
+
+    public void updateFaceVertices(ArrayList<MeshAttribute> attributes, MeshAttributeType type, int faceNumber, float[] updatedValues) {
+        float[][] values = new float[4][updatedValues.length];
+        for (int i = 0; i < 4; i++) {
+            System.arraycopy(updatedValues, 0, values[i], 0, updatedValues.length);
+        }
+        ;
+        updateFaceVertices(attributes, type, faceNumber, values);
     }
 
     public void setRectUVs(Vector2f origin, Vector2f size) {
