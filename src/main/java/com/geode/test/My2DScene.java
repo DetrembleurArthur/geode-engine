@@ -23,7 +23,7 @@ import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-@SceneEntry(value = "my_2d_scene", first = true)
+@SceneEntry(value = "my_2d_scene", first = false)
 public class My2DScene extends Scene {
 
     public @Inject Application app;

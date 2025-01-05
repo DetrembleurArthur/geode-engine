@@ -11,6 +11,7 @@ public class SpriteSheetConfiguration implements Serializable {
     private int columns;
     private int row_padding = 0;
     private int column_padding = 0;
+    private String textureId;
     private HashMap<String, AnimationFrames> animations = new HashMap<>();
 
     public static class AnimationFrames implements Serializable {
@@ -94,5 +95,13 @@ public class SpriteSheetConfiguration implements Serializable {
 
     public void setAnimations(HashMap<String, AnimationFrames> animations) {
         this.animations = animations;
+    }
+
+    public String getTextureId() {
+        return textureId;
+    }
+
+    public void setTextureId(String textureId) {
+        this.textureId = textureId;
     }
 }

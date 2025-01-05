@@ -72,7 +72,7 @@ public class KeyManager implements Initializable, Closeable {
 
     public void updateKey(KeyInput keyInput) {
         keys[keyInput.getScancode()] = keyInput;
-        System.err.println(keyInput);
+        //System.err.println(keyInput);
     }
 
     public KeyInput getKey(Keys key) {

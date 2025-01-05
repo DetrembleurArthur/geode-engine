@@ -51,7 +51,7 @@ public class My3DScene extends Scene {
             resources.shader3d.init();
             resources.gun.init();
             resources.cube.init();
-            resources.texture.init();
+           // resources.texture.init();
 
             camera3D = new Camera3D(windowManager);
             localCamera = new Camera3D(windowManager);

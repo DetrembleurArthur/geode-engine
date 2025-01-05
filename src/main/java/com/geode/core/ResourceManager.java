@@ -54,6 +54,11 @@ public abstract class ResourceManager<T extends Resource> implements Initializab
         return addResource(name, "", Extensions.NONE, locator);
     }
 
+    public T addResourceFromId(String id, ResourceLocator locator) throws GeodeException {
+        String[] tokens = id.split("\\.");
+        return addResource(tokens[1], tokens[0], Extensions.NONE, locator);
+    }
+
     public T addResource(String name, T resource) throws GeodeException {
         if (!resources.containsKey(name)) {
             logger.info("add Resource<{}> : {}", resource.getClass().getName(), name);

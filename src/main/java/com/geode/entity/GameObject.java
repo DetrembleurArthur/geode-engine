@@ -4,7 +4,6 @@ import com.geode.core.Closeable;
 import com.geode.core.Initializable;
 import com.geode.core.Updateable;
 import com.geode.core.components.base.Component;
-import com.geode.core.components.base.UpdateableComponent;
 import com.geode.exceptions.GeodeException;
 
 import java.util.ArrayList;
@@ -55,8 +54,8 @@ public class GameObject implements Initializable, Updateable, Closeable {
         }
         try {
             T target = clazz.getConstructor(GameObject.class).newInstance(this);
-            target.init();
             components.add(target);
+            target.init();
             return target;
         } catch (Exception e) {
             throw new GeodeException(e);

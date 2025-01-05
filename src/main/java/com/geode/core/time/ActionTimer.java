@@ -31,6 +31,10 @@ public class ActionTimer extends Timer implements Updateable {
         this.restartCondition = restartCondition;
     }
 
+    public void setStartConditionAsRestartCondition() {
+        this.restartCondition = startCondition;
+    }
+
     public Runnable getOnRun() {
         return onRun;
     }

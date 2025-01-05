@@ -3,6 +3,8 @@ package com.geode.graphics.sprite;
 import com.geode.config.JsonLoader;
 import com.geode.config.SpriteSheetConfiguration;
 import com.geode.core.Resource;
+import com.geode.core.ResourceLocator;
+import com.geode.core.TextureManager;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Texture;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +28,7 @@ public class SpriteSheet implements Resource {
     private Vector2f spriteSizeNormalized;
     private final HashMap<String, SpriteAnimation> animations = new HashMap<>();
     private int innerInitialRowCounter = 0;
+    private Texture texture;
 
     public SpriteSheet(String configurationFile) throws IOException {
         SpriteSheetConfiguration configuration = JsonLoader.load(configurationFile, SpriteSheetConfiguration.class);
@@ -36,11 +39,16 @@ public class SpriteSheet implements Resource {
         spriteNumber = rows * cols;
         spriteSize = new Vector2i(size.x / cols - padding.x, size.y / rows - padding.y);
         spriteSizeNormalized = new Vector2f((float) spriteSize.x / size.x, (float) spriteSize.y / size.x);
+        texture = TextureManager.getInstance().getResource(configuration.getTextureId());
+        if (texture == null) {
+            texture = TextureManager.getInstance().addResourceFromId(configuration.getTextureId(), ResourceLocator.getInstance());
+        }
         configuration.getAnimations().forEach((name, frames) -> registerAnimation(name, frames.getStart(), frames.getEnd()));
     }
 
     public SpriteSheet(final Texture texture, int rows, int cols, Vector2i padding) throws GeodeException {
         this.size = texture.getSize();
+        this.texture = texture;
         this.rows = rows;
         this.cols = cols;
         this.padding = new Vector2i(padding);
@@ -85,6 +93,12 @@ public class SpriteSheet implements Resource {
 
     public SpriteAnimation getAnimation(String name) {
         return animations.get(name);
+    }
+
+    public Texture getTexture() {
+        if (texture != null && !texture.isLoaded())
+            texture.load();
+        return texture;
     }
 
     @Override

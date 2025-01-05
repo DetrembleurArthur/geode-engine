@@ -262,7 +262,7 @@ public class Transform {
     }
 
     public Transform translateY(float y) {
-        setX(position.y + y);
+        setY(position.y + y);
         return this;
     }
 

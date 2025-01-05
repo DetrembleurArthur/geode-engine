@@ -15,7 +15,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Text extends SpacialGameObject {
     private String value;

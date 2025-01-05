@@ -5,6 +5,7 @@
     "columns": 4,
     "row_padding": 4,
     "column_padding": 4,
+    "textureId": "default.blob",
     "animations": {
         "down": {
             "start": 0,

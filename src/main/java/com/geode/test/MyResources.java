@@ -22,8 +22,8 @@ public class MyResources {
     @Artifact(value = "3d", ext = Extensions.SHA_GLSL)
     public Shader shader3d;
 
-    @Artifact(value = "blob", ext = Extensions.TEX_PNG)
-    public Texture texture;
+    /*@Artifact(value = "blob", ext = Extensions.TEX_PNG)
+    public Texture texture;*/
 
     @Artifact(value = "gun")
     public Model gun;
