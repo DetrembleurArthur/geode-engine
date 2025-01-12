@@ -5,12 +5,13 @@ import com.geode.core.Initializable;
 import com.geode.core.Updateable;
 import com.geode.core.components.base.Component;
 import com.geode.exceptions.GeodeException;
+import com.geode.utils.DelayedList;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class GameObject implements Initializable, Updateable, Closeable {
-    protected final ArrayList<Component> components = new ArrayList<>();
+    protected final DelayedList<Component> components = new DelayedList<>();
 
     public ArrayList<Component> getComponents() {
         return components;
@@ -28,6 +29,7 @@ public class GameObject implements Initializable, Updateable, Closeable {
                 ((Updateable) component).update();
             }
         }
+        components.applyDelayedActions();
     }
 
     @Override
@@ -35,12 +37,14 @@ public class GameObject implements Initializable, Updateable, Closeable {
         for (Component component : components) {
             component.close();
         }
-        components.clear();
+        components.delayedClear();
     }
 
     public <T extends Component> boolean hasComponent(Class<T> clazz) {
         return components.stream().anyMatch(component -> component.getClass().equals(clazz));
     }
+
+
 
     public <T extends Component> T getComponent(Class<T> clazz) throws GeodeException {
         for (Component component : components) {
@@ -68,7 +72,7 @@ public class GameObject implements Initializable, Updateable, Closeable {
             }
         }
         if (target != null) {
-            components.remove(target);
+            components.delayedDel(target);
             target.close();
         }
     }

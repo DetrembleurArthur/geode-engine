@@ -65,6 +65,9 @@ public class Application implements Initializable, Runnable, AutoCloseable {
                 .addResource("tex", "default", Extensions.SHA_GLSL, resourceLocator)
                 .load();
         resourceManagers.get(Shader.class)
+                .addResource("tex-colored", "default", Extensions.SHA_GLSL, resourceLocator)
+                .load();
+        resourceManagers.get(Shader.class)
                 .addResource("font", "default", Extensions.SHA_GLSL, resourceLocator)
                 .load();
         resourceManagers.get(Shader.class)

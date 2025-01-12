@@ -131,26 +131,13 @@ public class Mesh implements Initializable, Closeable {
     }
 
     public void setRectUVs(Vector2f origin, Vector2f size) {
-        int vertexSize = MeshAttribute.calculateTotalSize(attributes);
-        int skipSize = 0;
-        for (MeshAttribute attribute : attributes) {
-            if (attribute.getAttributeType().equals(MeshAttributeType.UV)) {
-                break;
-            }
-            skipSize += attribute.getSize() * attribute.getElements();
-        }
-        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
-        float[] uv = new float[]{
-                origin.x, origin.y
-        };
-        GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, skipSize, uv);
-        uv[1] = origin.y + size.y;
-        GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, vertexSize + skipSize, uv);
-        uv[0] = origin.x + size.x;
-        GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, 2L * vertexSize + skipSize, uv);
-        uv[1] = origin.y;
-        GL30.glBufferSubData(GL15.GL_ARRAY_BUFFER, 3L * vertexSize + skipSize, uv);
-        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+
+        updateFaceVertices((ArrayList<MeshAttribute>) attributes, MeshAttributeType.UV, 0, new float[][]{
+                {origin.x, origin.y},
+                {origin.x, origin.y + size.y},
+                {origin.x + size.x, origin.y + size.y},
+                {origin.x + size.y, origin.y}
+        });
     }
 
     public boolean isReady() {

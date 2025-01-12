@@ -2,6 +2,7 @@ package com.geode.entity;
 
 import com.geode.core.Updateable;
 import com.geode.exceptions.GeodeException;
+import com.geode.utils.DelayedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,8 +11,8 @@ import java.util.ArrayList;
 public class GameObjectLayer implements AutoCloseable, Updateable {
 
     private static final Logger logger = LogManager.getLogger(GameObjectLayer.class);
-    private final ArrayList<GameObject> gameObjects = new ArrayList<>();
-    private final ArrayList<SpacialGameObject> spatialGameObjects = new ArrayList<>();
+    private final DelayedList<GameObject> gameObjects = new DelayedList<>();
+    private final DelayedList<SpacialGameObject> spatialGameObjects = new DelayedList<>();
 
     @Override
     public void update() {
@@ -21,6 +22,8 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
         for (GameObject spatialGameObject : spatialGameObjects) {
             spatialGameObject.update();
         }
+        gameObjects.applyDelayedActions();
+        spatialGameObjects.applyDelayedActions();
     }
 
     public void draw() {
@@ -31,9 +34,9 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
 
     public GameObjectLayer add(GameObject gameObject) {
         if (gameObject instanceof SpacialGameObject) {
-            spatialGameObjects.add((SpacialGameObject) gameObject);
+            spatialGameObjects.delayedAdd((SpacialGameObject) gameObject);
         } else {
-            gameObjects.add(gameObject);
+            gameObjects.delayedAdd(gameObject);
         }
         try {
             gameObject.init();
@@ -45,9 +48,9 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
 
     public GameObjectLayer del(GameObject gameObject) {
         if (gameObject instanceof SpacialGameObject) {
-            spatialGameObjects.remove(gameObject);
+            spatialGameObjects.delayedDel((SpacialGameObject) gameObject);
         } else {
-            gameObjects.remove(gameObject);
+            gameObjects.delayedDel(gameObject);
         }
         try {
             gameObject.close();
@@ -66,8 +69,8 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
             gameObject.close();
         }
         logger.info("clear {} game objects", (gameObjects.size() + spatialGameObjects.size()));
-        gameObjects.clear();
-        spatialGameObjects.clear();
+        gameObjects.delayedClear();
+        spatialGameObjects.delayedClear();
     }
 
     public ArrayList<SpacialGameObject> getSpatialGameObjects() {

@@ -5,7 +5,7 @@ import com.geode.utils.Condition;
 
 public class ActionTimer extends Timer implements Updateable {
 
-    private Runnable onRun;
+    private TimerRunnable onRun;
     private Runnable onStop;
     private Condition startCondition;
     private Condition restartCondition;
@@ -19,44 +19,50 @@ public class ActionTimer extends Timer implements Updateable {
         return startCondition;
     }
 
-    public void setStartCondition(Condition startCondition) {
+    public ActionTimer setStartCondition(Condition startCondition) {
         this.startCondition = startCondition;
+        return this;
     }
 
     public Condition getRestartCondition() {
         return restartCondition;
     }
 
-    public void setRestartCondition(Condition restartCondition) {
+    public ActionTimer setRestartCondition(Condition restartCondition) {
         this.restartCondition = restartCondition;
+        return this;
     }
 
-    public void setStartConditionAsRestartCondition() {
+    public ActionTimer setStartConditionAsRestartCondition() {
         this.restartCondition = startCondition;
+        return this;
     }
 
-    public Runnable getOnRun() {
+    public TimerRunnable getOnRun() {
         return onRun;
     }
 
-    public void setOnRun(Runnable onRun) {
+    public ActionTimer setOnRun(TimerRunnable onRun) {
         this.onRun = onRun;
+        return this;
     }
 
     public Runnable getOnStop() {
         return onStop;
     }
 
-    public void setOnStop(Runnable onStop) {
+    public ActionTimer setOnStop(Runnable onStop) {
         this.onStop = onStop;
+        return this;
     }
 
     public boolean isAutoRestart() {
         return autoRestart;
     }
 
-    public void setAutoRestart(boolean autoRestart) {
+    public ActionTimer setAutoRestart(boolean autoRestart) {
         this.autoRestart = autoRestart;
+        return this;
     }
 
     @Override
@@ -74,7 +80,7 @@ public class ActionTimer extends Timer implements Updateable {
                 }
             } else {
                 if (onRun != null) {
-                    onRun.run();
+                    onRun.run(getElapsedTime());
                 }
             }
         } else if (startCondition != null && startCondition.ok()) {

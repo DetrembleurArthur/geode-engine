@@ -5,12 +5,13 @@ import com.geode.core.components.base.FullStateComponent;
 import com.geode.entity.GameObject;
 import com.geode.entity.SpacialGameObject;
 import com.geode.exceptions.GeodeException;
+import com.geode.utils.DelayedList;
 
 import java.util.ArrayList;
 
 public class HierarchyComponent extends FullStateComponent {
 
-    private final ArrayList<GameObject> children = new ArrayList<>();
+    private final DelayedList<GameObject> children = new DelayedList<>();
 
     public HierarchyComponent(GameObject child) {
         super(child);
@@ -27,6 +28,7 @@ public class HierarchyComponent extends FullStateComponent {
         for (GameObject child : children) {
             child.update();
         }
+        children.applyDelayedActions();
     }
 
     @Override
@@ -46,7 +48,7 @@ public class HierarchyComponent extends FullStateComponent {
     }
 
     public HierarchyComponent addChild(GameObject child) {
-        children.add(child);
+        children.delayedAdd(child);
         if (child instanceof SpacialGameObject) {
             GameObject owner = getChild();
             if (owner instanceof SpacialGameObject) {
@@ -58,7 +60,7 @@ public class HierarchyComponent extends FullStateComponent {
     }
 
     public HierarchyComponent delChild(GameObject child) {
-        children.remove(child);
+        children.delayedDel(child);
         try {
             child.close();
         } catch (Exception e) {
@@ -68,7 +70,7 @@ public class HierarchyComponent extends FullStateComponent {
     }
 
     public HierarchyComponent detachChild(GameObject child) {
-        children.remove(child);
+        children.delayedDel(child);
         if (child instanceof SpacialGameObject) {
             ((SpacialGameObject)child).tr().setParentModel(null);
         }

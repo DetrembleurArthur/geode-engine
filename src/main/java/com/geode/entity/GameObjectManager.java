@@ -4,6 +4,7 @@ import com.geode.core.Initializable;
 import com.geode.core.SceneManager;
 import com.geode.core.Updateable;
 import com.geode.exceptions.GeodeException;
+import com.geode.utils.DelayedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 public class GameObjectManager implements Initializable, AutoCloseable, Updateable {
 
     private static final Logger logger = LogManager.getLogger(GameObjectManager.class);
-    private ArrayList<GameObjectLayer> layers = new ArrayList<>();
+    private final DelayedList<GameObjectLayer> layers = new DelayedList<>();
 
 
     @Override
@@ -26,6 +27,7 @@ public class GameObjectManager implements Initializable, AutoCloseable, Updateab
         for (GameObjectLayer layer : layers) {
             layer.update();
         }
+        layers.applyDelayedActions();
     }
 
     public void draw() {
@@ -44,7 +46,7 @@ public class GameObjectManager implements Initializable, AutoCloseable, Updateab
 
     public GameObjectLayer createLayer() {
         GameObjectLayer layer = new GameObjectLayer();
-        layers.add(layer);
+        layers.delayedAdd(layer);
         return layer;
     }
 

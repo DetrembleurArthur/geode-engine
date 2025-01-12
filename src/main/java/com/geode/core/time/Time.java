@@ -53,6 +53,14 @@ public class Time {
         return Time.delta;
     }
 
+    public static float deltify(float value) {
+        return (float) (value * Time.delta);
+    }
+
+    public static double deltify(double value) {
+        return value * Time.delta;
+    }
+
     public static int getCurrentFps() {
         return (int) (1.0 / delta);
     }

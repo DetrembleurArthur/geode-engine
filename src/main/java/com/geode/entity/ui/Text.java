@@ -113,6 +113,8 @@ public class Text extends SpacialGameObject {
     }
 
     public void setValue(String value) {
+        if(value.equals(this.value))
+            return;
         String localValue = preprocessValue(value);
         try {
             RendererComponent rendererComponent = getComponent(RendererComponent.class);
