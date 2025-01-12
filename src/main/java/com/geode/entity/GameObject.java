@@ -7,6 +7,7 @@ import com.geode.core.components.base.Component;
 import com.geode.exceptions.GeodeException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class GameObject implements Initializable, Updateable, Closeable {
     protected final ArrayList<Component> components = new ArrayList<>();
@@ -38,12 +39,7 @@ public class GameObject implements Initializable, Updateable, Closeable {
     }
 
     public <T extends Component> boolean hasComponent(Class<T> clazz) {
-        for (Component component : components) {
-            if (component.getClass().equals(clazz)) {
-                return true;
-            }
-        }
-        return false;
+        return components.stream().anyMatch(component -> component.getClass().equals(clazz));
     }
 
     public <T extends Component> T getComponent(Class<T> clazz) throws GeodeException {
@@ -55,6 +51,7 @@ public class GameObject implements Initializable, Updateable, Closeable {
         try {
             T target = clazz.getConstructor(GameObject.class).newInstance(this);
             components.add(target);
+            sortComponents();
             target.init();
             return target;
         } catch (Exception e) {
@@ -85,5 +82,9 @@ public class GameObject implements Initializable, Updateable, Closeable {
             }
         }
         components.removeAll(targets);
+    }
+
+    public void sortComponents() {
+        components.sort(Comparator.comparingInt(Component::getPriority));
     }
 }

@@ -4,7 +4,8 @@ import org.joml.*;
 import org.joml.Math;
 
 public class Transform {
-    private Matrix4f model = new Matrix4f();
+    private final Matrix4f model = new Matrix4f();
+    private final Matrix4f localModel = new Matrix4f();
     private Matrix4f parentModel = null;
     private boolean dirty = true;
     private Vector3f position = new Vector3f();
@@ -14,13 +15,14 @@ public class Transform {
 
     public Matrix4f getModel() {
         if (dirty) {
-            model = model.identity()
-                    .translate(position)
-                    .rotate(Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
-                    .rotate(Math.toRadians(rotation.y), new Vector3f(0, 1, 0))
-                    .rotate(Math.toRadians(rotation.z), new Vector3f(0, 0, 1))
-                    .translate(origin.negate(new Vector3f()))
-                    .scale(size);
+            localModel.identity()
+                .translate(position)
+                .rotate(Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
+                .rotate(Math.toRadians(rotation.y), new Vector3f(0, 1, 0))
+                .rotate(Math.toRadians(rotation.z), new Vector3f(0, 0, 1))
+                .translate(origin.negate(new Vector3f()))
+                .scale(size);
+            model.set(localModel);
             dirty = false;
         }
         if (parentModel != null) {
@@ -32,9 +34,9 @@ public class Transform {
                     1.0f / parentScale.z
             );
             Matrix4f inverseScaleMatrix = new Matrix4f().scaling(inverseParentScale);
-            return new Matrix4f(parentModel)
+            model.set(new Matrix4f(parentModel)
                     .mul(inverseScaleMatrix)
-                    .mul(model);
+                    .mul(localModel));
         }
         return model;
     }

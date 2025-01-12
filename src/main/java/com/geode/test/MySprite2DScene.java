@@ -1,6 +1,7 @@
 package com.geode.test;
 
 import com.geode.core.*;
+import com.geode.core.components.HierarchyComponent;
 import com.geode.core.components.LambdaComponent;
 import com.geode.core.components.SpriteComponent;
 import com.geode.core.key.KeyCommand;
@@ -11,12 +12,10 @@ import com.geode.core.time.Time;
 import com.geode.entity.Shape;
 import com.geode.entity.TexturedShape;
 import com.geode.entity.ui.Text;
-import com.geode.entity.ui.TextAlignment;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Colors;
 import com.geode.graphics.ui.text.FontCharsets;
 import org.joml.Vector2i;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 @SceneEntry(value = "my_sprite_2d_scene", first = true)
@@ -64,43 +63,44 @@ public class MySprite2DScene extends Scene {
         blob.getComponent(SpriteComponent.class)
                 .setSpriteSheet(resources.blob_sheet)
                 .setAnimation("down")
-                .setAnimationDelay(0.5);
+                .setAnimationDelay(0.4);
         blob.getComponent(LambdaComponent.class)
                 .set(() -> {
                     if (keyManager.isKeyPressed(Keys.UP)) {
-                        blob.tr().translateY((float) (-300.f * Time.getDelta()));
+                        blob.tr().translateY((float) (-250.f * Time.getDelta()));
                     }
                     if (keyManager.isKeyPressed(Keys.DOWN)) {
-                        blob.tr().translateY((float) (300.f * Time.getDelta()));
+                        blob.tr().translateY((float) (250.f * Time.getDelta()));
                     }
                     if (keyManager.isKeyPressed(Keys.RIGHT)) {
-                        blob.tr().translateX((float) (300.f * Time.getDelta()));
+                        blob.tr().translateX((float) (250.f * Time.getDelta()));
                     }
                     if (keyManager.isKeyPressed(Keys.LEFT)) {
-                        blob.tr().translateX((float) (-300.f * Time.getDelta()));
+                        blob.tr().translateX((float) (-250.f * Time.getDelta()));
                     }
                 });
 
         Text text = new Text("Arthur", resources.terraria_font);
         text.setTextHeight(30);
         text.setColor(Colors.black());
-        text.tr().setParentModel(blob.tr().getModel());
         text.tr().setCenterOrigin();
         text.tr().setX(blob.tr().getSize().x / 2);
         text.tr().setY(-5);
 
         Shape shape = new Shape();
-        shape.tr().setWidth(300);
-        shape.tr().setHeight(300);
-        shape.tr().setPosition(new Vector2i(100, 100));
+        shape.tr().setWidth(30);
+        shape.tr().setHeight(30);
+        shape.tr().setPosition(new Vector2i(0, 0));
         shape.setCornerColor(0, Colors.red());
         shape.setCornerColor(1, Colors.blue());
         shape.setCornerColor(2, Colors.green());
         shape.setCornerColor(3, Colors.yellow());
 
-        getGoManager().layer().add(shape);
         getGoManager().layer().add(blob);
-        getGoManager().layer().add(text);
+
+        blob.getComponent(HierarchyComponent.class).addChild(text);
+        text.getComponent(HierarchyComponent.class).addChild(shape);
+        text.getComponent(LambdaComponent.class).set(() -> text.tr().rotate((float) (45 * Time.getDelta())));
 
         keyManager.setEnableKeyCommands(true);
         keyManager.addCommand(new KeyCommand(() -> blob.getComponent(SpriteComponent.class).setAnimation("up"), false)
