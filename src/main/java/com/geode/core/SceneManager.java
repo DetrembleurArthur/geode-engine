@@ -46,6 +46,7 @@ public class SceneManager implements Initializable, Closeable {
                             injectFields(scene);
                             scene.innerInit();
                             scene.init();
+                            scene.getGoManager().initDelayedActions();
                             scenes.put(sceneEntry.value(), scene);
                             if(sceneEntry.first() && currentScene == null) {
                                 currentScene = scene;
@@ -62,6 +63,7 @@ public class SceneManager implements Initializable, Closeable {
                 });
         if(currentScene != null) {
             currentScene.select();
+            currentScene.getGoManager().initDelayedActions();
         }
         sceneClasses.clear();
         logger.info("SceneManager initialize");
@@ -114,6 +116,7 @@ public class SceneManager implements Initializable, Closeable {
         scenes.forEach((s, scene) -> {
             try {
                 logger.info("close Scene {}", s);
+                scene.getGoManager().initDelayedActions();
                 scene.close();
                 scene.innerClose();
             } catch (Exception e) {
@@ -127,9 +130,12 @@ public class SceneManager implements Initializable, Closeable {
         if(scene != null) {
             if(scene != currentScene) {
                 currentScene.unselect();
+                currentScene.getGoManager().initDelayedActions();
                 scene.innerClose();
+                scene.getGoManager().initDelayedActions();
                 currentScene = scene;
                 currentScene.select();
+                currentScene.getGoManager().initDelayedActions();
                 logger.info("Scene {} set as current", id);
             }
         }

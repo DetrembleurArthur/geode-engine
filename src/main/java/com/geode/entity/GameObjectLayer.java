@@ -26,6 +26,11 @@ public class GameObjectLayer implements AutoCloseable, Updateable {
         spatialGameObjects.applyDelayedActions();
     }
 
+    public void initDelayedActions() {
+        gameObjects.applyDelayedActions();
+        spatialGameObjects.applyDelayedActions();
+    }
+
     public void draw() {
         for (SpacialGameObject spatialGameObject : spatialGameObjects) {
             spatialGameObject.draw();

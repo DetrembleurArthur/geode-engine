@@ -30,6 +30,13 @@ public class GameObjectManager implements Initializable, AutoCloseable, Updateab
         layers.applyDelayedActions();
     }
 
+    public void initDelayedActions() {
+        layers.applyDelayedActions();
+        for(GameObjectLayer layer : layers) {
+            layer.initDelayedActions();
+        }
+    }
+
     public void draw() {
         for (GameObjectLayer layer : layers) {
             layer.draw();

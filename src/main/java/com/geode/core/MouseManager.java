@@ -12,8 +12,8 @@ import com.geode.graphics.camera.Camera2D;
 import com.geode.utils.Utils;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MathUtil;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -61,6 +61,15 @@ public class MouseManager implements Initializable, Closeable {
 
     public Vector2i getPositionFromCamera2D() {
         return getPosition(CameraRegistry.getInstance().get(Camera2D.class));
+    }
+
+    public Vector2f getFPositionFromCamera2D() {
+        return new Vector2f(getPosition(CameraRegistry.getInstance().get(Camera2D.class)));
+    }
+
+    public Vector3f get3FPositionFromCamera2D() {
+        Vector2i pos = getPosition(CameraRegistry.getInstance().get(Camera2D.class));
+        return new Vector3f(pos.x, pos.y, 0);
     }
 
     public void hide() {

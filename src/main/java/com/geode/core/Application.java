@@ -103,8 +103,8 @@ public class Application implements Initializable, Runnable, AutoCloseable {
         Scene currentScene = sceneManager.getCurrent();
         double delta = Time.auto_update_delta();
         window.clear();
-        currentScene.update(delta);
         currentScene.innerUpdate();
+        currentScene.update(delta);
         try {
             currentScene.draw(delta);
 

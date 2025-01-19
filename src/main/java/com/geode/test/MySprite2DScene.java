@@ -1,10 +1,8 @@
 package com.geode.test;
 
 import com.geode.core.*;
-import com.geode.core.components.HierarchyComponent;
-import com.geode.core.components.LambdaComponent;
-import com.geode.core.components.SpriteComponent;
-import com.geode.core.components.TimerComponent;
+import com.geode.core.collider.Collider;
+import com.geode.core.components.*;
 import com.geode.core.key.KeyCommand;
 import com.geode.core.key.Keys;
 import com.geode.core.reflections.Inject;
@@ -17,7 +15,9 @@ import com.geode.entity.ui.Text;
 import com.geode.exceptions.GeodeException;
 import com.geode.graphics.Colors;
 import com.geode.graphics.ui.text.FontCharsets;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 @SceneEntry(value = "my_sprite_2d_scene", first = true)
@@ -49,6 +49,8 @@ public class MySprite2DScene extends Scene {
         }
     }
 
+    private TexturedShape blob, blob2;
+
     @Override
     public void select() throws GeodeException {
         //System.err.println(resources.gameSettings.of(MyGameConfig.class).getTitle());
@@ -57,20 +59,17 @@ public class MySprite2DScene extends Scene {
         //default2DCamera.focus(new Vector2f(text.tr().getPosition().x, text.tr().getPosition().y));
 
 
-        TexturedShape blob = new TexturedShape();
+        blob = new TexturedShape();
         blob.tr().setWidth(100);
         blob.tr().setHeight(100);
         blob.tr().setCenterOrigin();
-        blob.setCornerColor(0, Colors.blue());
-        blob.setCornerColor(1, Colors.red());
-        blob.setCornerColor(2, Colors.red());
-        blob.setCornerColor(3, Colors.blue());
-        blob.getComponent(SpriteComponent.class)
+        blob.c_sprite()
                 .setSpriteSheet(resources.blob_sheet)
                 .setAnimation("down")
                 .setAnimationDelay(0.4);
-        blob.getComponent(LambdaComponent.class)
+        blob.c_lambda()
                 .set(() -> {
+                    blob.tr().rotate(Time.deltify(-45));
                     if (keyManager.isKeyPressed(Keys.UP)) {
                         blob.tr().translateY(Time.deltify(-250f));
                     }
@@ -93,13 +92,23 @@ public class MySprite2DScene extends Scene {
         text.tr().setY(-5);
 
 
-        getGoManager().layer().add(blob);
 
-        blob.getComponent(HierarchyComponent.class).addChild(text);
+        blob.c_hierarchy().addChild(text);
 
-        blob.getComponent(TimerComponent.class).add(new ActionTimer(10)
+        blob.c_timer().add(new ActionTimer(10)
                 .setOnRun((tm) -> text.setValue((int) tm + " seconds"))
                 .setOnStop(() -> text.setValue("completed")));
+
+        blob2 = new TexturedShape();
+        blob2.tr().setWidth(100);
+        blob2.tr().setHeight(100);
+        blob2.tr().setRotation2D(45);
+        blob2.c_lambda().set(() -> blob2.tr().rotate(Time.deltify(45)));
+        blob2.tr().setCenterOrigin();
+        blob2.c_sprite()
+                .setSpriteSheet(resources.blob_sheet)
+                .setAnimation("down")
+                .setAnimationDelay(0.4);
 
         keyManager.setEnableKeyCommands(true);
         keyManager.addCommand(new KeyCommand(() -> blob.getComponent(SpriteComponent.class).setAnimation("up"), false)
@@ -111,11 +120,35 @@ public class MySprite2DScene extends Scene {
         keyManager.addCommand(new KeyCommand(() -> blob.getComponent(SpriteComponent.class).setAnimation("down"), false)
                 .key(Keys.DOWN));
 
+        blob.c_collider().createCollider(new Vector2f(0.25f, 0.25f), new Vector2f(0.5f, 1.5f));
+        blob2.c_collider().createCollider();
+        blob2.tr().setBottomRightPosition(new Vector3f(500, 500, 0));
+
+        text.c_collider().createCollider();
+
+        text.c_collider().showColliders();
+        blob.c_collider().showColliders();
+        blob2.c_collider().showColliders();
+
+
+
+
+
+        getGoManager().layer().add(blob).add(blob2);
+
+
     }
 
     @Override
     public void update(double dt) {
-
+        if(blob.c_collider().isCollision(blob2)) {
+            blob.setColor(Colors.red());
+            blob2.setColor(Colors.red());
+            //blob2.tr().setHeight(300);
+        } else {
+            blob.setColor(Colors.green());
+            blob2.setColor(Colors.green());
+        }
     }
 
     @Override

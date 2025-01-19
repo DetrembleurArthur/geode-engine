@@ -3,6 +3,7 @@ package com.geode.entity;
 import com.geode.core.Closeable;
 import com.geode.core.Initializable;
 import com.geode.core.Updateable;
+import com.geode.core.components.*;
 import com.geode.core.components.base.Component;
 import com.geode.exceptions.GeodeException;
 import com.geode.utils.DelayedList;
@@ -43,7 +44,6 @@ public class GameObject implements Initializable, Updateable, Closeable {
     public <T extends Component> boolean hasComponent(Class<T> clazz) {
         return components.stream().anyMatch(component -> component.getClass().equals(clazz));
     }
-
 
 
     public <T extends Component> T getComponent(Class<T> clazz) throws GeodeException {
@@ -90,5 +90,29 @@ public class GameObject implements Initializable, Updateable, Closeable {
 
     public void sortComponents() {
         components.sort(Comparator.comparingInt(Component::getPriority));
+    }
+
+    public ColliderComponent c_collider() {
+        return getComponent(ColliderComponent.class);
+    }
+
+    public HierarchyComponent c_hierarchy() {
+        return getComponent(HierarchyComponent.class);
+    }
+
+    public LambdaComponent c_lambda() {
+        return getComponent(LambdaComponent.class);
+    }
+
+    public RendererComponent c_renderer() {
+        return getComponent(RendererComponent.class);
+    }
+
+    public SpriteComponent c_sprite() {
+        return getComponent(SpriteComponent.class);
+    }
+
+    public TimerComponent c_timer() {
+        return getComponent(TimerComponent.class);
     }
 }

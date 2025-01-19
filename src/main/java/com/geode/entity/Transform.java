@@ -13,15 +13,25 @@ public class Transform {
     private Vector3f rotation = new Vector3f();
     private Vector3f origin = new Vector3f();
 
+    public Transform copy(){
+        Transform transform = new Transform();
+        transform.setPosition(position);
+        transform.setSize(size);
+        transform.setRotation(rotation);
+        transform.setOrigin(origin);
+        transform.setParentModel(parentModel);
+        return transform;
+    }
+
     public Matrix4f getModel() {
         if (dirty) {
             localModel.identity()
-                .translate(position)
-                .rotate(Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
-                .rotate(Math.toRadians(rotation.y), new Vector3f(0, 1, 0))
-                .rotate(Math.toRadians(rotation.z), new Vector3f(0, 0, 1))
-                .translate(origin.negate(new Vector3f()))
-                .scale(size);
+                    .translate(position)
+                    .rotate(Math.toRadians(rotation.x), new Vector3f(1, 0, 0))
+                    .rotate(Math.toRadians(rotation.y), new Vector3f(0, 1, 0))
+                    .rotate(Math.toRadians(rotation.z), new Vector3f(0, 0, 1))
+                    .translate(new Vector3f(origin).negate())
+                    .scale(size);
             model.set(localModel);
             dirty = false;
         }
@@ -40,6 +50,42 @@ public class Transform {
         }
         return model;
     }
+
+    public Vector3f getWorldPosition() {
+        Vector3f pos = new Vector3f();
+        getModel().getTranslation(pos);
+        return pos;
+    }
+
+    public void getCornersInWorld(Vector2f[] dstWorldPositions) {
+        getSubCornersInWorld(new Vector2f(0, 0), new Vector2f(1, 1), dstWorldPositions);
+    }
+
+    public void getSubCornersInWorld(Vector2f topLeftNormalized, Vector2f sizeNormalized, Vector2f[] dstWorldPositions) {
+        Vector4f localTopLeft = new Vector4f(topLeftNormalized.x, topLeftNormalized.y, 0, 1); // Top-left corner
+        Vector4f localTopRight = new Vector4f(topLeftNormalized.x + sizeNormalized.x, topLeftNormalized.y, 0, 1); // Top-right corner
+        Vector4f localBottomLeft = new Vector4f(topLeftNormalized.x, topLeftNormalized.y + sizeNormalized.y, 0, 1); // Bottom-left corner
+        Vector4f localBottomRight = new Vector4f(topLeftNormalized.x + sizeNormalized.x, topLeftNormalized.y + sizeNormalized.y, 0, 1); // Bottom-right corner
+
+        Vector4f worldTopLeft = new Vector4f();
+        Vector4f worldTopRight = new Vector4f();
+        Vector4f worldBottomLeft = new Vector4f();
+        Vector4f worldBottomRight = new Vector4f();
+
+        Matrix4f modelMatrix = getModel();
+
+        modelMatrix.transform(localTopLeft, worldTopLeft);
+        modelMatrix.transform(localTopRight, worldTopRight);
+        modelMatrix.transform(localBottomLeft, worldBottomLeft);
+        modelMatrix.transform(localBottomRight, worldBottomRight);
+
+        dstWorldPositions[0].set(worldTopLeft.x, worldTopLeft.y);
+        dstWorldPositions[1].set(worldTopRight.x, worldTopRight.y);
+        dstWorldPositions[2].set(worldBottomLeft.x, worldBottomLeft.y);
+        dstWorldPositions[3].set(worldBottomRight.x, worldBottomRight.y);
+    }
+
+
 
     public void setParentModel(Matrix4f parentModel) {
         this.parentModel = parentModel;
@@ -127,7 +173,7 @@ public class Transform {
     }
 
     public void setOriginPosition(Vector3f targetOrigin, Vector3f position) {
-        setPosition(position.add(this.origin.sub(targetOrigin)));
+        setPosition(position.add(new Vector3f(this.origin).sub(targetOrigin)));
     }
 
     public void setTopLeftPosition(Vector3f position) {
@@ -147,11 +193,11 @@ public class Transform {
     }
 
     public void setCenterPosition(Vector3f position) {
-        setOriginPosition(new Vector3f(position.x / 2f, position.y / 2f, 0), position);
+        setOriginPosition(new Vector3f(size.x / 2f, size.y / 2f, 0), position);
     }
 
     public Vector3f getOriginPosition(Vector3f targetOrigin) {
-        return position.sub(origin.sub(targetOrigin));
+        return new Vector3f(position).sub(new Vector3f(origin).sub(targetOrigin));
     }
 
     public Vector3f getTopLeftPosition() {
@@ -241,6 +287,14 @@ public class Transform {
         return size;
     }
 
+    public float getWidth() {
+        return size.x;
+    }
+
+    public float getHeight() {
+        return size.y;
+    }
+
     public Vector3f getRotation() {
         return rotation;
     }
@@ -276,5 +330,13 @@ public class Transform {
     public Transform rotate(float degree) {
         setRotation2D(rotation.z + degree);
         return this;
+    }
+
+    public boolean includes(Vector2f worldPoint) {
+        Matrix4f inverseModel = new Matrix4f(getModel()).invert();
+        Vector3f localPoint = new Vector3f();
+        inverseModel.transformPosition(new Vector3f(worldPoint.x, worldPoint.y, 0), localPoint);
+        return localPoint.x >= 0 && localPoint.x <= 1 &&
+                localPoint.y >= 0 && localPoint.y <= 1;
     }
 }
