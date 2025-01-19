@@ -3,6 +3,7 @@ package com.geode.test;
 import com.geode.core.*;
 import com.geode.core.collider.Collider;
 import com.geode.core.components.*;
+import com.geode.core.events.EventClick;
 import com.geode.core.key.KeyCommand;
 import com.geode.core.key.Keys;
 import com.geode.core.reflections.Inject;
@@ -92,7 +93,6 @@ public class MySprite2DScene extends Scene {
         text.tr().setY(-5);
 
 
-
         blob.c_hierarchy().addChild(text);
 
         blob.c_timer().add(new ActionTimer(10)
@@ -131,17 +131,17 @@ public class MySprite2DScene extends Scene {
         blob2.c_collider().showColliders();
 
 
-
-
-
         getGoManager().layer().add(blob).add(blob2);
+
+        blob.c_event().registerEvent(EventClick.class)
+                .setAction(EventClick.class, sourceEvent -> System.err.println(sourceEvent.<EventClick>as().getMp()));
 
 
     }
 
     @Override
     public void update(double dt) {
-        if(blob.c_collider().isCollision(blob2)) {
+        if (blob.c_collider().isCollision(blob2)) {
             blob.setColor(Colors.red());
             blob2.setColor(Colors.red());
             //blob2.tr().setHeight(300);

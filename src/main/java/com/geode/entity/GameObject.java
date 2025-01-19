@@ -115,4 +115,8 @@ public class GameObject implements Initializable, Updateable, Closeable {
     public TimerComponent c_timer() {
         return getComponent(TimerComponent.class);
     }
+
+    public EventComponent c_event() {
+        return getComponent(EventComponent.class);
+    }
 }
